@@ -21,7 +21,7 @@ def get_recipes_details(urls):
             page = requests.get(url)
             soup = bs4.BeautifulSoup(page.content, "lxml")
             recipes_data[i]['url'] = url
-        except FileNotFound or TypeError:
+        except IOError or TypeError:
             recipes_data[i]['url'] = None
 
         # extracting the author data
@@ -100,7 +100,7 @@ def get_recipes_details(urls):
 
 
 def write_data_to_csv(recipes_data):
-    """ Writing the 'recepies_data' to csv file """
+    """ Writing the 'recepies_data' dictionary to csv file """
     with open(r'most_made_today_01.csv', 'w' ,newline='') as csv_recipes_today:
         csv_writer= csv.writer(csv_recipes_today)
         headers = CATEGORIES
