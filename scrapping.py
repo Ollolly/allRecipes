@@ -25,7 +25,6 @@ def get_category_link(url):
     """ returns a link to a category """
     source = requests.get(url).text
     soup = BeautifulSoup(source, 'lxml')
-    href = soup.select(CATEGORY)[0]['href']
     href = ''
     try:
         href = soup.select(CATEGORY)[0]['href']
@@ -39,10 +38,10 @@ def get_subcategory_links(url):
     source = requests.get(url).text
     soup = BeautifulSoup(source, 'lxml')
     base = soup.find('div', id="insideScroll")
-    sub_category_list = []
+    sub_category_list = {}
     for link in BeautifulSoup(str(base), 'lxml').findAll('a'):
         if link.span.text in SUBCATEGORY:
-            sub_category_list.append(link['href'])
+            sub_category_list[link.span.text] = link['href']
     return sub_category_list
 
 
@@ -63,19 +62,15 @@ def get_recipe_links(url):
 def main():
     link = get_category_link(URL)
     subcategory = get_subcategory_links(link)
-    recipes = []
-    for cat in subcategory:
-        recipes.append(get_recipe_links(cat))
+    recipes = {}
+    for cat, link in subcategory.items():
+        recipes[cat] = get_recipe_links(link)
 
-    rep_data = grd.get_recipes_details(recipes)
-    grd.write_data_to_csv(rep_data)
-
+    # extract all data and write it to file
+    for cat in recipes:
+        rep_data = grd.get_recipes_details(cat, recipes[cat])
+        grd.write_data_to_csv(rep_data)
 
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
