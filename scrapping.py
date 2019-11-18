@@ -14,6 +14,15 @@ SUBCATEGORY = ['Butter Cookies']
 
 def scroll_down(browser, number_of_scroll_downs):
     """ scrolls web page down """
+    body = browser.find_element_by_tag_name("body")
+    while number_of_scroll_downs >= 0:
+        body.send_keys(Keys.PAGE_DOWN)
+        number_of_scroll_downs -= 1
+    return browser
+
+
+def get_category_link(url):
+    """ returns a link to a category """
     source = requests.get(url).text
     soup = BeautifulSoup(source, 'lxml')
     href = ''
@@ -24,23 +33,15 @@ def scroll_down(browser, number_of_scroll_downs):
     return href
 
 
-def get_category_link(url):
-    """ returns a link to a category """
-    source = requests.get(url).text
-    soup = BeautifulSoup(source, 'lxml')
-    href = soup.select(CATEGORY)[0]['href']
-    return href
-
-
 def get_subcategory_links(url):
     """ returns a list of subcategory links """
     source = requests.get(url).text
     soup = BeautifulSoup(source, 'lxml')
     base = soup.find('div', id="insideScroll")
-    sub_category_list = []
+    sub_category_list = {}
     for link in BeautifulSoup(str(base), 'lxml').findAll('a'):
         if link.span.text in SUBCATEGORY:
-            sub_category_list.append(link['href'])
+            sub_category_list[link.span.text] = link['href']
     return sub_category_list
 
 
@@ -61,19 +62,15 @@ def get_recipe_links(url):
 def main():
     link = get_category_link(URL)
     subcategory = get_subcategory_links(link)
-    recipes = []
-    for cat in subcategory:
-        recipes.append(get_recipe_links(cat))
+    recipes = {}
+    for cat, link in subcategory.items():
+        recipes[cat] = get_recipe_links(link)
 
-    rep_data = grd.get_recipes_details(recipes)
-    grd.write_data_to_csv(rep_data)
-
+    # extract all data and write it to file
+    for cat in recipes:
+        rep_data = grd.get_recipes_details(cat, recipes[cat])
+        grd.write_data_to_csv(rep_data)
 
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
