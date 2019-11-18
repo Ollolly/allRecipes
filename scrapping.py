@@ -3,21 +3,25 @@ import requests
 import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+import get_recepie_details as grd
 
 
 URL = 'https://www.allrecipes.com/'
 SCROLL_DOWN = 4
-CATEGORY = '#insideScroll > ul:nth-child(1) > li:nth-child(3) > a:nth-child(1)'
+CATEGORY = '#insideScroll > ul:nth-child(1) > li:nth-child(3) > a:nth-child(1)'  # Cookies
 SUBCATEGORY = ['Butter Cookies']
 
 
 def scroll_down(browser, number_of_scroll_downs):
     """ scrolls web page down """
-    body = browser.find_element_by_tag_name("body")
-    while number_of_scroll_downs >= 0:
-        body.send_keys(Keys.PAGE_DOWN)
-        number_of_scroll_downs -= 1
-    return browser
+    source = requests.get(url).text
+    soup = BeautifulSoup(source, 'lxml')
+    href = ''
+    try:
+        href = soup.select(CATEGORY)[0]['href']
+    except IndexError:
+        pass
+    return href
 
 
 def get_category_link(url):
@@ -61,7 +65,9 @@ def main():
     for cat in subcategory:
         recipes.append(get_recipe_links(cat))
 
-    print(recipes)
+    rep_data = grd.get_recipes_details(recipes)
+    grd.write_data_to_csv(rep_data)
+
 
 
 if __name__ == '__main__':
