@@ -14,14 +14,11 @@ SUBCATEGORY = ['Butter Cookies']
 
 def scroll_down(browser, number_of_scroll_downs):
     """ scrolls web page down """
-    source = requests.get(url).text
-    soup = BeautifulSoup(source, 'lxml')
-    href = ''
-    try:
-        href = soup.select(CATEGORY)[0]['href']
-    except IndexError:
-        pass
-    return href
+    body = browser.find_element_by_tag_name("body")
+    while number_of_scroll_downs >= 0:
+        body.send_keys(Keys.PAGE_DOWN)
+        number_of_scroll_downs -= 1
+    return browser
 
 
 def get_category_link(url):
@@ -29,6 +26,11 @@ def get_category_link(url):
     source = requests.get(url).text
     soup = BeautifulSoup(source, 'lxml')
     href = soup.select(CATEGORY)[0]['href']
+    href = ''
+    try:
+        href = soup.select(CATEGORY)[0]['href']
+    except IndexError:
+        pass
     return href
 
 
