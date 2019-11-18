@@ -3,6 +3,7 @@ import requests
 import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+import get_recepie_details as grd
 
 
 URL = 'https://www.allrecipes.com/'
@@ -64,7 +65,9 @@ def main():
     for cat in subcategory:
         recipes.append(get_recipe_links(cat))
 
-    print(recipes)
+    rep_data = grd.get_recipes_details(recipes)
+    grd.write_data_to_csv(rep_data)
+
 
 
 if __name__ == '__main__':
