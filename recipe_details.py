@@ -5,7 +5,7 @@ import csv
 
 
 CATEGORIES = ['sub_category', 'url', 'author', 'review', 'summary', 'name', 'rating', 'image', 'prep_time',
-              'calories', 'pieces']
+              'calories', 'pieces', 'ingredients', 'directions']
 
 
 def get_recipes_details(sub_category, urls):
@@ -22,51 +22,20 @@ def get_recipes_details(sub_category, urls):
         except IndexError or TypeError:
             recipes_data[i]['url'] = None
 
-        # extracting the author data
-        result = soup.select('span[itemprop="author"]')
-        recipes_data[i]['author'] = None
-        if result is not None:
-            try:
-                s_author = result[0]
-                author = s_author.text
-                recipes_data[i]['author'] = author
-            except IndexError or TypeError:
-                pass
+        # extracting data with the following pattern: soup.select(attribute_val[cat])
+        attribute_val = {'author': 'span[itemprop="author"]', 'review': 'span[class="review-count"]',
+                         'summary': 'div[itemprop="description"]', 'name': 'h1[class="recipe-summary__h1"]',
+                         'prep_time': 'span[aria-label="Ready in 50 Minutes"]', 'calories':'span[class="calorie-count"]'}
+        for cat in  attribute_val:
+            result = soup.select(attribute_val[cat])
+            recipes_data[i][cat] = None
+            if result is not None:
+                try:
+                    recipes_data[i][cat] = result[0].text
+                except IndexError or TypeError:
+                    pass
 
-        # extracting number of reviews
-        result = soup.select('span[class="review-count"]')
-        recipes_data[i]['review'] = None
-        if result is not None:
-            try:
-                s_review = result[0]
-                review = s_review.text
-                recipes_data[i]['review'] = review
-            except IndexError or TypeError:
-                pass
-
-        # extracting the summary data
-        result = soup.select('div[itemprop="description"]')
-        recipes_data[i]['summary'] = None
-        if result is not None:
-            try:
-                s_summary = result[0]
-                summary = s_summary.text
-                recipes_data[i]['summary'] = summary
-            except IndexError or TypeError:
-                pass
-
-        # extracting the recipe name
-        result = soup.select('h1[class="recipe-summary__h1"]')
-        recipes_data[i]['name'] = None
-        if result is not None:
-            try:
-                s_name = result[0]
-                name = s_name.text
-                recipes_data[i]['name'] = name
-            except IndexError or TypeError:
-                pass
-
-        # extracting the recipe rating
+            # extracting the recipe rating
         result = soup.find('div', class_="rating-stars")
         recipes_data[i]['rating'] = None
         if result is not None:
@@ -88,29 +57,6 @@ def get_recipes_details(sub_category, urls):
             except IndexError or TypeError:
                 pass
 
-        # extracting the preparation time
-        result = soup.select('span[aria-label="Ready in 50 Minutes"]')
-        recipes_data[i]['prep_time'] = None
-        if result is not None:
-            try:
-                s_prep_time = result[0]
-                prep_time = s_prep_time.text
-                recipes_data[i]['prep_time'] = prep_time
-            except IndexError or TypeError:
-                pass
-
-        # extractiong the calories data
-        result = soup.select('span[class="calorie-count"]')
-        recipes_data[i]['calories'] = None
-        if result is not None:
-            try:
-                s_calorie = result[0]
-                calorie = s_calorie.text
-                recipes_data[i]['calories'] = calorie
-            except IndexError or TypeError:
-                pass
-
-
         # extracting the cookie quantity
         result = soup.find('span', class_="ng-binding")
         recipes_data[i]['pieces'] = None
@@ -122,7 +68,22 @@ def get_recipes_details(sub_category, urls):
             except IndexError or TypeError:
                 pass
 
+        # extracting the cookie ingredients
+        result = soup.findAll('span', class_="recipe-ingred_txt added")
+        recipes_data[i]['ingredients'] = None
+        if result is not None:
+            ingredients = [tag.text for tag in result]
+            recipes_data[i]['ingredients'] = ' '.join(ingredients)
+
+        # extracting the cookie directions
+        result = soup.findAll('span', class_="recipe-directions__list--item")
+        recipes_data[i]['directions'] = None
+        if result is not None:
+            directions = [tag.text for tag in result]
+            recipes_data[i]['directions'] = ' '.join(directions)
+
     return recipes_data
+
 
 
 def write_data_to_csv(recipes_data):
