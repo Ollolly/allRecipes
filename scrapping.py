@@ -1,27 +1,23 @@
 from bs4 import BeautifulSoup
 import requests
-import time
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 import recipe_details as rd
 
 
 URL = 'https://www.allrecipes.com/'
-SCROLL_DOWN = 4
-CATEGORY = '#insideScroll > ul:nth-child(1) > li:nth-child(3) > a:nth-child(1)'  # Cookies
-SUBCATEGORY = ['Butter Cookies', 'Bar Cookies', 'Chocolate Cookies', 'Fruit Cookies']
+CATEGORY = ['Cookies']
+SUBCATEGORY = ['Butter Cookies']
 
 
 def get_category_link(url):
     """ returns a link to a category """
     source = requests.get(url).text
     soup = BeautifulSoup(source, 'lxml')
-    href = ''
-    try:
-        href = soup.select(CATEGORY)[0]['href']
-    except IndexError:
-        pass
-    return href
+    base = soup.find('div', id="insideScroll")
+    links = {}
+    for link in BeautifulSoup(str(base), 'lxml').findAll('a'):
+        if link.span.text in CATEGORY:
+            links[link.span.text] = link['href']
+    return links
 
 
 def get_subcategory_links(url):
@@ -38,12 +34,6 @@ def get_subcategory_links(url):
 
 def get_recipe_links(url):
     """ returns links to all recipes on webpage """
-    # scrolls web page down   TO DO
-    # browser = webdriver.Chrome("/usr/lib/chromium-browser/chromedriver")
-    # browser.get(url)
-    # time.sleep(1)
-    # browser = scroll_down(browser, SCROLL_DOWN)
-    # driver.find_element_by_tag_name('body').send_keys(Keys.END)
     source = requests.get(url).text
     soup = BeautifulSoup(source, 'lxml')
     # find all recipes and extract their links
@@ -53,8 +43,9 @@ def get_recipe_links(url):
 
 
 def main():
-    link = get_category_link(URL)
+    link = get_category_link(URL)[CATEGORY[0]]
     subcategory = get_subcategory_links(link)
+
     recipes = {}
     for cat, link in subcategory.items():
         recipes[cat] = get_recipe_links(link)
