@@ -3,9 +3,7 @@ import bs4
 from collections import defaultdict
 import csv
 
-
-CATEGORIES = ['sub_category', 'url', 'author', 'review', 'summary', 'name', 'rating', 'image', 'prep_time',
-              'calories', 'pieces', 'ingredients', 'directions']
+from config import RECIPE_DETAILS
 
 
 def get_recipes_details(sub_category, urls):
@@ -90,7 +88,7 @@ def write_data_to_csv(recipes_data):
     """ Appending the 'recepies_data' dictionary to csv file"""
     with open(r'recipes_details.csv', 'a', newline='') as csv_recipes_today:
         csv_writer = csv.writer(csv_recipes_today)
-        headers = CATEGORIES
+        headers = RECIPE_DETAILS
         csv_writer.writerow(headers)
         for key,row in recipes_data.items():
             csv_writer.writerow(row.values())
