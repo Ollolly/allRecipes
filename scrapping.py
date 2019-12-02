@@ -39,6 +39,7 @@ def get_recipe_links(url):
     return links
 
 
-def write_cat(cat, recipes):
+def write_cat_details_to_csv(cat, recipes):
+    """ get recipe details for full category 'cat' and write to csv """
     rep_data = rd.get_recipes_details(cat, recipes[cat])
     rd.write_data_to_csv(rep_data)

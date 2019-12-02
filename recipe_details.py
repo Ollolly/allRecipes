@@ -90,5 +90,5 @@ def write_data_to_csv(recipes_data):
         csv_writer = csv.writer(csv_recipes_today)
         headers = RECIPE_DETAILS
         csv_writer.writerow(headers)
-        for key,row in recipes_data.items():
+        for row in recipes_data.values():
             csv_writer.writerow(row.values())
