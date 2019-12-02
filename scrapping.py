@@ -1,11 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
+
 import recipe_details as rd
-
-
-URL = 'https://www.allrecipes.com/'
-CATEGORY = ['Cookies']
-SUBCATEGORY = ['Butter Cookies']
+from config import URL, CATEGORY, SUBCATEGORY
 
 
 def get_category_link(url):
