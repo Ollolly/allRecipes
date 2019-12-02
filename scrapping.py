@@ -1,8 +1,12 @@
 from bs4 import BeautifulSoup
 import requests
+import logging
 
 import recipe_details as rd
 from config import URL, CATEGORY, SUBCATEGORY
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_category_link(url):
