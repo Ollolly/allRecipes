@@ -39,19 +39,6 @@ def get_recipe_links(url):
     return links
 
 
-def main():
-    link = get_category_link(URL)[CATEGORY[0]]
-    subcategory = get_subcategory_links(link)
-
-    recipes = {}
-    for cat, link in subcategory.items():
-        recipes[cat] = get_recipe_links(link)
-
-    # extract all data and write it to file
-    for cat in recipes:
-        rep_data = rd.get_recipes_details(cat, recipes[cat])
-        rd.write_data_to_csv(rep_data)
-
-
-if __name__ == '__main__':
-    main()
+def write_cat(cat, recipes):
+    rep_data = rd.get_recipes_details(cat, recipes[cat])
+    rd.write_data_to_csv(rep_data)
