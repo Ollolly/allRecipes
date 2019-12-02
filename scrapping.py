@@ -6,9 +6,6 @@ import recipe_details as rd
 from config import URL, CATEGORY, SUBCATEGORY
 
 
-logger = logging.getLogger(__name__)
-
-
 def get_category_link(url):
     """ returns a link to a category """
     source = requests.get(url).text
@@ -45,5 +42,7 @@ def get_recipe_links(url):
 
 def write_cat_details_to_csv(cat, recipes):
     """ get recipe details for full category 'cat' and write to csv """
+    logger = logging.getLogger(__name__)
+    logger.info('Appending data to csv file')
     rep_data = rd.get_recipes_details(cat, recipes[cat])
     rd.write_data_to_csv(rep_data)
