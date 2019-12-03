@@ -15,8 +15,7 @@ def get_recipe_details(url):
     soup = bs4.BeautifulSoup(page.content, "lxml")
     attribute_val = {'author': 'span[itemprop="author"]', 'review': 'span[class="review-count"]',
                      'summary': 'div[itemprop="description"]', 'name': 'h1[class="recipe-summary__h1"]',
-                     'prep_time': 'span[class="ready-in-time"]', 'calories': 'span[class="calorie-count"]',
-                     'quantity': 'span[class="ng-binding"]'}
+                     'prep_time': 'span[class="ready-in-time"]', 'calories': 'span[class="calorie-count"]'}
 
     for attr, path in attribute_val.items():
         recipe_data[attr] = get_attribute(attr, path, soup)
@@ -24,7 +23,7 @@ def get_recipe_details(url):
     recipe_data['rating'] = get_rating(soup)
     recipe_data['img'] = get_image(soup)
     recipe_data['directions'] = get_directions(soup)
-    recipe_data['ingredients'] = ''
+    recipe_data['ingredients'] = get_ingredients(soup)
     return recipe_data
 
 
@@ -34,7 +33,6 @@ def get_attribute(attrib, path, data):
     ret_val = None
     if result is not None:
         try:
-            print(result)
             ret_val = result[0].text.strip()
             if attrib == 'calories':
                 ret_val = int(re.findall(r'\d+', ret_val)[0])
@@ -83,7 +81,7 @@ def get_directions(data):
     return ret_val
 
 
-def get_directions(data):
+def get_ingredients(data):
     """ extracting the recipe ingredients """
     result = data.findAll('span', class_="recipe-ingred_txt added")
     ret_val = None
@@ -95,9 +93,8 @@ def get_directions(data):
 
 def get_recipes_details(category, sub_category, urls):
     """ Extract recipe details for each link from the variable 'urls' """
-    recipes_data = {}
+    recipes_data = defaultdict(dict)
     for i, url in enumerate(urls):
-
         recipes_data[i]['category'] = category
         recipes_data[i]['sub_category'] = sub_category
         recipes_data[i]['url'] = url
@@ -109,8 +106,8 @@ def get_recipes_details(category, sub_category, urls):
 
 def write_data_to_csv(recipes_data):
     """ Appending the 'recepies_data' dictionary to csv file"""
-    with open(r'recipes_details.csv', 'a', newline='') as csv_recipes_today:
-        csv_writer = csv.writer(csv_recipes_today)
+    with open(r'recipes_details.csv', 'a', newline='') as csv_recipe:
+        csv_writer = csv.writer(csv_recipe)
         headers = RECIPE_DETAILS
         csv_writer.writerow(headers)
         for row in recipes_data.values():

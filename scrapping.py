@@ -44,5 +44,5 @@ def write_cat_details_to_csv(category, subcategory, recipes):
     """ get recipe details for full category 'cat' and write to csv """
     logger = logging.getLogger(__name__)
     logger.info('Appending data to csv file')
-    rep_data = rd.get_recipes_details(category, subcategory, recipes[category])
+    rep_data = rd.get_recipes_details(category, subcategory, recipes)
     rd.write_data_to_csv(rep_data)

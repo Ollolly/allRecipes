@@ -1,8 +1,8 @@
 # constants
 # associated with the module recipe_details.py
 RECIPE_DETAILS = ['category', 'sub_category', 'url',
-                  'author', 'review', 'summary', 'name', 'rating', 'prep_time', 'calories',
-                  'pieces', 'image', 'ingredients', 'directions']
+                  'author', 'review', 'summary', 'name',  'prep_time', 'calories',
+                  'rating', 'image', 'directions', 'ingredients']
               
 # associated with the module scrapping.py     
 URL = 'https://www.allrecipes.com/'
