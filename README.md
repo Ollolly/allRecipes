@@ -11,6 +11,8 @@ requests 2.22
 
 Beautifulsoup 4.8
 
+logging 0.5.1.2
+
 ## Usage
 TODO: Write usage instructions
 

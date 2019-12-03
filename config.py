@@ -14,4 +14,4 @@ LOG_CONF = 'logging.conf'
 
 # associated with the module scrapping.py     
 CATEGORY = ['Cookies']
-SUBCATEGORY = ['Butter Cookies']
+SUBCATEGORY = ['Banana Cake']
