@@ -5,6 +5,9 @@ import scrapping as sc
 from config import URL, CATEGORY, LOG_CONF
 
 
+import recipe_details as rd
+
+
 def main():
     """ logger initialization """
     logging.config.fileConfig(LOG_CONF)
@@ -21,7 +24,15 @@ def main():
     # extract all data and write it to file
     # wrap the for loop as a func in scraping and call the function from the main
     for cat in recipes:
-        sc.write_cat_details_to_csv(cat, recipes)
+        sc.write_cat_details_to_csv('cookies', cat, recipes)
+
+    # link = 'https://www.allrecipes.com/recipe/10192/russian-tea-cakes-i/?internalSource=hub%20recipe&referringId=15057&referringContentType=Recipe%20Hub&clickId=cardslot%208'
+    # print(link)
+    # recipe = rd.get_recipe_details(link)
+    # print(recipe)
+    #
+    # for k, v in recipe.items():
+    #     print(f'{k}: {v}', end='\n\n')
 
 
 if __name__ == '__main__':
