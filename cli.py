@@ -5,9 +5,6 @@ import scrapping as sc
 from config import URL, CATEGORY, LOG_CONF
 
 
-import recipe_details as rd
-
-
 def main():
     """ logger initialization """
     logging.config.fileConfig(LOG_CONF)
