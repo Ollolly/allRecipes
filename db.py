@@ -1,6 +1,7 @@
 import logging
 import mysql.connector as mysql
 
+import recipe_details as rd
 from config import DB_NAME, DB_HOST, DB_USER, DB_PASSWD, RECIPE_DETAILS
 
 
@@ -65,7 +66,9 @@ def insert_data_to_db(data):
                         'name': record['name'], 'p_time': record['p_time'], 'cal': record['calories'],
                         'rating': record['rating'], 'img': record['image'], 'dir': record['directions'],
                         'ingr': record['ingredients']})
-
+        if i % 10000 == 0:
+            db.commit()
+    db.commit()
     db.close()
 
 
@@ -76,6 +79,15 @@ def show_db():
     for i in cursor:
         print(i)
     db.close()
+
+
+def write_data_to_db(category, subcategory, recipes):
+    """ get recipe details for full category 'cat' and write to csv """
+    logger = logging.getLogger(__name__)
+    logger.info(f'Extracting data from category{category} , subcategory {subcategory}')
+    rep_data = rd.get_recipes_details(category, subcategory, recipes)
+    logger.info(f'Appending data to csv file: category{category} , subcategory {subcategory}')
+    rd.write_data_to_csv(rep_data)
 
 
 if __name__ == '__main__':
