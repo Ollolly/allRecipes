@@ -1,3 +1,10 @@
+"""
+This module handles the creation and management of the database:
+     - creates new database if not exits
+     - inserts data to database
+     - delete database
+ """
+
 import logging
 import mysql.connector as mysql
 
@@ -72,12 +79,12 @@ def insert_data_to_db(data):
     try:
         for i, record in enumerate(data):
             cursor.execute(f"USE {DB_NAME}")
-            insert_query = """INSERT INTO recipes (name, category, sub_category, ingredients, prep_time, calories, author, 
-                            review, rating, url, image, summary, directions) 
+            insert_query = """INSERT INTO recipes (name, category, sub_category, ingredients, prep_time, calories, 
+                            author, review, rating, url, image, summary, directions) 
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-            row = (record['name'], record['category'], record['sub_category'], record['ingredients'], record['prep_time'],
-                   record['calories'], record['author'], record['review'], record['rating'], record['url'], record['image'],
-                   record['summary'], record['directions'])
+            row = (record['name'], record['category'], record['sub_category'], record['ingredients'],
+                   record['prep_time'], record['calories'], record['author'], record['review'], record['rating'],
+                   record['url'], record['image'], record['summary'], record['directions'])
             cursor.execute(insert_query, row)
 
             if i % 10000 == 0:
@@ -98,14 +105,3 @@ def write_data_to_db(data):
     """
     create_db()
     insert_data_to_db(data)
-
-
-def show_db():
-    db, cursor = connect_db()
-    cursor.execute(f"SHOW DATABASES")
-
-    for i in cursor:
-        print(i)
-    db.close()
-
-
