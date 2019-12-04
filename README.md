@@ -5,13 +5,9 @@ TODO: Write a project description
 TO DO
 
 ## Requirements
-Python 3.6, 3.7
 
-requests 2.22
+All requirements are specified in the file "requirements.txt"
 
-Beautifulsoup 4.8
-
-logging 0.5.1.2
 
 ## Usage
 TODO: Write usage instructions
