@@ -53,7 +53,6 @@ def main():
     logging.config.fileConfig(LOG_CONF)
     logging.info('Scrapping category links')
     args = parse_arguments_advanced()
-    print(type(args))
     # in case l is given alone
     if args.list and args.category is None:
         category_list = sc.get_category_list(URL)
@@ -61,7 +60,7 @@ def main():
 
     # in case -lc is given
     if not(args.list is None) and not(args.category is None):
-        if len(arg.list)!=1:
+        if len(args.list)!=1:
             cat = args.category
             cat_link = sc.get_category_links(URL, cat)
             sub_category_list = sc.get_category_list(cat_link[cat])
@@ -79,8 +78,8 @@ def main():
             cat_link = sc.get_category_links(URL, cat)
             sub_cat_links = sc.get_category_links(cat_link[cat], sub_cat)
             recipes = {}
-            for cat, link in sub_cat_links.items():
-                recipes[cat] = sc.get_recipe_links(link)
+            for sub_cat, link in sub_cat_links.items():
+                recipes[sub_cat] = sc.get_recipe_links(link)
 
             logging.debug(sub_cat_links)
             data = sc.scrap_data(cat, recipes)
