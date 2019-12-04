@@ -1,14 +1,22 @@
+"""
+This module contains the main function, and parse_arguments_advanced.
+It executes the program from the main function, according to the specified arguments given by the user.
+the input arguments are parsed by the parse_arguments_advanced function
+"""
+
 import logging
 import logging.config
 import argparse
 import scrapping as sc
-from config import URL, CATEGORY, LOG_CONF
+from config import URL, LOG_CONF
 import sys
-
+import db
 
 def parse_arguments_advanced():
-
-    # categories_str = ', '. join(categories)
+    """ Processing and storing the arguments of the program
+        returns an argparse.Nampespace object, depicting and store the input arguments
+        according to the defined flags
+    """
     parser = argparse.ArgumentParser(
         description="Script Description"
     )
@@ -36,25 +44,16 @@ def parse_arguments_advanced():
                         associated with Butter Cookies.
                         """, nargs='+')
 
-
-    # parser.add_argument("-s","--save", help="""
-    #                     Indicates the requested format to save the data,
-    #                     recieves one argument 'DB' or 'csv'.
-    #                     choose "DB" to save the data in sql DB (divided to tables) or "csv" to save it in a csv file
-    #                     if -s is not specified, the data by default will be saved in a sql DB.
-    #                     """, required='--get' in sys.argv, choices=['DB', 'csv'])
-    # TODO - add s flag conditional in the future to enable the user choose how to save the data
-
     arguments = parser.parse_args()
     return arguments
 
 
 def main():
-    """ logger initialization """
+    """ The main function executes the program """
     logging.config.fileConfig(LOG_CONF)
     logging.info('Scrapping category links')
     args = parse_arguments_advanced()
-    print(args)
+    print(type(args))
     # in case l is given alone
     if args.list and args.category is None:
         category_list = sc.get_category_list(URL)
@@ -87,7 +86,7 @@ def main():
             data = sc.scrap_data(cat, recipes)
             logging.debug(data)
             sc.write_data_to_csv(data)
-
+            db.write_data_to_db(data)
 
 if __name__ == '__main__':
     main()

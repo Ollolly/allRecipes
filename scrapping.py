@@ -1,13 +1,13 @@
 """
 This module stands for scraping data from the www.allrecipes.com website:
 The actions of the module:
-    - get list of categories/subcategories
+    - returns lists/links of categories/subcategories
+    - save the scraped data to csv/db
 """
 
 from bs4 import BeautifulSoup
 import requests
 import logging
-
 import recipe_details as rd
 
 
