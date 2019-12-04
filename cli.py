@@ -79,12 +79,14 @@ def main():
             cat_link = sc.get_category_links(URL, cat)
             sub_cat_links = sc.get_category_links(cat_link[cat], sub_cat)
             recipes = {}
-            for cat, link in sub_cat_links.items():
+            for scat, link in sub_cat_links.items():
                 recipes[cat] = sc.get_recipe_links(link)
 
             logging.debug(sub_cat_links)
             data = sc.scrap_data(cat, recipes)
             logging.debug(data)
+            logging.debug(cat)
+
             sc.write_data_to_csv(data)
             db.write_data_to_db(data)
 
