@@ -1,6 +1,6 @@
 ## Web scraping 
 This program receives a category and subcategory from the user, and scrapes relevant information 
-from the website: allrecipes.com regarding all possible recipes associated with the requested arguments.
+from the website: www.allrecipes.com regarding all possible recipes associated with the requested arguments.
 The program returns a detailed database and csv file containing the data in a well-ordered manner.  
 
 ## Features
