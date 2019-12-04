@@ -31,7 +31,12 @@ def get_subcategory_links(url):
 
 
 def get_recipe_links(url):
-    """ returns links to all recipes on webpage """
+    """ returns links to all recipes on webpage
+        Parameters:
+        url (string): link for scraping
+        Returns:
+        list: list of links to recipes
+    """
     source = requests.get(url).text
     soup = BeautifulSoup(source, 'lxml')
     # find all recipes and extract their links
@@ -40,10 +45,30 @@ def get_recipe_links(url):
     return links
 
 
-def write_cat_details_to_csv(category, subcategory, recipes):
-    """ get recipe details for full category 'cat' and write to csv """
+def scrap_data(category, subcategories_links):
+    """ scraps recipe details for category and subcategories
+        Parameters:
+        category (string): category for scraping
+        subcategories_links (dict): links for scraping, where subcategories is a key
+        Returns:
+        list of dict: where each dictionary contains data of one link
+    """
     logger = logging.getLogger(__name__)
-    logger.info(f'Extracting data from category{category} , subcategory {subcategory}')
-    rep_data = rd.get_recipes_details(category, subcategory, recipes)
-    logger.info(f'Appending data to csv file: category{category} , subcategory {subcategory}')
-    rd.write_data_to_csv(rep_data)
+    rep_data = []
+    for cat, links in subcategories_links.items():
+        logger.info(f'Extracting data from category {category} , subcategory {cat}')
+        data = rd.get_recipes_details(category, cat, links)
+        rep_data.extend(data)
+    return rep_data
+
+
+def write_data_to_csv(data):
+    """ get recipe details and write it to csv
+        Parameters:
+        data (list of dict): data to write to csv file
+        Returns:
+        list of dict: where each dictionary contains data of one link
+    """
+    logger = logging.getLogger(__name__)
+    logger.info(f'Appending data to csv file')
+    rd.write_data_to_csv(data)

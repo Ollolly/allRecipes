@@ -1,7 +1,7 @@
 import logging
 import mysql.connector as mysql
 
-from config import DB_NAME, DB_HOST, DB_USER, DB_PASSWD
+from config import DB_NAME, DB_HOST, DB_USER, DB_PASSWD, RECIPE_DETAILS
 
 
 def connect_db():
@@ -57,13 +57,16 @@ def delete_db():
 def insert_data_to_db(data):
     """ Insert data from variable 'data' to database tables """
     db, cursor = connect_db()
+    for i, record in enumerate(data):
+        cursor.execute("""INSERT INTO recipes VALUES (:cat, :sub_cat, :url, :author, :review, :summary, :name, 
+                        :p_time, :cal, :rating, :img, :dir, :ingr)""",
+                       {'cat': record['category'], 'sub_cat': record['sub_category'], 'url': record['url'],
+                        'author': record['author'], 'review': record['review'], 'summary': record['summary'],
+                        'name': record['name'], 'p_time': record['p_time'], 'cal': record['calories'],
+                        'rating': record['rating'], 'img': record['image'], 'dir': record['directions'],
+                        'ingr': record['ingredients']})
 
-
-
-
-
-
-
+    db.close()
 
 
 def show_db():

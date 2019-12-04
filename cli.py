@@ -20,9 +20,8 @@ def main():
 
 
     # extract all data and write it to file
-    # wrap the for loop as a func in scraping and call the function from the main
-    for subcat in recipes:
-        sc.write_cat_details_to_csv(CATEGORY[0], subcat, recipes[subcat])
+    data = sc.scrap_data(CATEGORY[0], recipes)
+    sc.write_data_to_csv(data)
 
 
 if __name__ == '__main__':

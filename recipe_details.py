@@ -159,7 +159,10 @@ def get_recipes_details(category, sub_category, urls):
 
 
 def write_data_to_csv(recipes_data):
-    """ Appending the 'recepies_data' dictionary to csv file"""
+    """ Appending the 'recipes_data' dictionary to csv file
+        Parameters:
+        recipes_data (????): category for scraping
+    """
     is_file_exists = False
     if os.path.exists(FILENAME):
         is_file_exists = True
