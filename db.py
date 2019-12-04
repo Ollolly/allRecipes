@@ -44,6 +44,8 @@ def create_db():
     except mysql.Error as err:
         logger = logging.getLogger(__name__)
         logger.error(f'Failed creating table: {err}"')
+        # TODO raise exception
+        return
     finally:
         db.close()
 
