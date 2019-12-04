@@ -1,14 +1,23 @@
+"""
+This module contains the main function, and parse_arguments_advanced.
+It executes the program from the main function, according to the specified arguments given by the user.
+the input arguments are parsed by the parse_arguments_advanced function
+"""
+
 import logging
 import logging.config
 import argparse
-import scrapping as sc
-from config import URL, CATEGORY, LOG_CONF
 import sys
+import scrapping as sc
+import db
+from config import URL, LOG_CONF
 
 
 def parse_arguments_advanced():
-
-    # categories_str = ', '. join(categories)
+    """ Processing and storing the arguments of the program
+        returns an argparse.Nampespace object, depicting and store the input arguments
+        according to the defined flags
+    """
     parser = argparse.ArgumentParser(
         description="Script Description"
     )
@@ -24,37 +33,27 @@ def parse_arguments_advanced():
                         -l flag and outputs the list of sub categories associated 
                         with the specified category. for example: '-lc Cookies' will output the 
                         following list: ['Butter Cookies', 'Bar Cookies', .....]
-                        """,#TODO add a condition that this flag can not be independent
+                        """,    # TODO add a condition that this flag can not be independent
                         action="store")
 
-    parser.add_argument("-g","--get", help="""
+    parser.add_argument("-g", "--get", help="""
                         scraping data of the requested category and subcategory and save it in a 
                         csv and sql data base. receives two arguments: category and sub-category 
                         Note: don't forget to add "" around category/subcategory of >=2 words.
                     
-                        For example: -g Cookies "Butter Cookies" -s csv will output the recipes 
-                        associated with Butter Cookies.
+                        For example: -g Cookies "Butter Cookies" 
+                        will output the recipes associated with Butter Cookies.
                         """, nargs='+')
-
-
-    # parser.add_argument("-s","--save", help="""
-    #                     Indicates the requested format to save the data,
-    #                     recieves one argument 'DB' or 'csv'.
-    #                     choose "DB" to save the data in sql DB (divided to tables) or "csv" to save it in a csv file
-    #                     if -s is not specified, the data by default will be saved in a sql DB.
-    #                     """, required='--get' in sys.argv, choices=['DB', 'csv'])
-    # TODO - add s flag conditional in the future to enable the user choose how to save the data
 
     arguments = parser.parse_args()
     return arguments
 
 
 def main():
-    """ logger initialization """
+    """ The main function executes the program """
     logging.config.fileConfig(LOG_CONF)
     logging.info('Scrapping category links')
     args = parse_arguments_advanced()
-    print(args)
     # in case l is given alone
     if args.list and args.category is None:
         category_list = sc.get_category_list(URL)
@@ -62,7 +61,7 @@ def main():
 
     # in case -lc is given
     if not(args.list is None) and not(args.category is None):
-        if len(arg.list)!=1:
+        if len(args.list) != 1:
             cat = args.category
             cat_link = sc.get_category_links(URL, cat)
             sub_category_list = sc.get_category_list(cat_link[cat])
@@ -72,7 +71,7 @@ def main():
 
     # in case -g is given correctly(with category and aub-category)
     if not (args.get is None):
-        if len(args.get)<=1:
+        if len(args.get) <= 1:
             sys.exit("invalid input")
         else:
             cat = args.get[0]
@@ -87,6 +86,7 @@ def main():
             data = sc.scrap_data(cat, recipes)
             logging.debug(data)
             sc.write_data_to_csv(data)
+            db.write_data_to_db(data)
 
 
 if __name__ == '__main__':

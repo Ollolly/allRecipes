@@ -1,4 +1,4 @@
-# Constants foe the project
+# Constants for the project
 # Scraping keys used in the module recipe_details.py
 RECIPE_DETAILS = ['category', 'sub_category', 'url',
                   'author', 'review', 'summary', 'name', 'prep_time', 'calories',
@@ -19,14 +19,4 @@ DB_NAME = 'allrecipes'
 # Database connection params
 DB_HOST = "localhost"
 DB_USER = "root"
-DB_PASSWD = "sd"
-
-
-
-
-
-# ***** temporary (will be removed in version 2) *****
-# associated with the module scrapping.py     
-CATEGORY = ['Cookies']
-SUBCATEGORY = ['Butter Cookies']
-# SUBCATEGORY = ['Bar Cookies', 'Butter Cookies', 'Fruit Cookies']
+DB_PASSWD = "ravitmes"
