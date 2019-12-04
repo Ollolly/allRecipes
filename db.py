@@ -1,12 +1,15 @@
 import logging
 import mysql.connector as mysql
 
-import recipe_details as rd
-from config import DB_NAME, DB_HOST, DB_USER, DB_PASSWD, RECIPE_DETAILS
+from config import DB_NAME, DB_HOST, DB_USER, DB_PASSWD
 
 
 def connect_db():
-    """ connects to db, returns connection and cursor """
+    """ connects to db, returns connection and cursor
+        Returns:
+        db: connection to db
+        cursor: database cursor
+    """
     db = mysql.connect(host=DB_HOST, user=DB_USER, passwd=DB_PASSWD)
     cursor = db.cursor()
     return db, cursor
@@ -14,6 +17,8 @@ def connect_db():
 
 def create_db():
     """ Creates database and tables if not exists """
+    logger = logging.getLogger(__name__)
+    logger.info("Create db and tables if not exists")
     db, cursor = connect_db()
     try:
         cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}")
@@ -21,7 +26,7 @@ def create_db():
         db.close()
         logger = logging.getLogger(__name__)
         logger.error(f'Failed creating database: {err}"')
-        raise mysql.Error
+        raise Exception('DB error')
 
     try:
         cursor.execute(f"USE {DB_NAME}")
@@ -30,22 +35,21 @@ def create_db():
                           name varchar(255),
                           category varchar(80),
                           sub_category varchar(80),
-                          ingredients varchar(255),
-                          prep_time int,
+                          ingredients BLOB,
+                          prep_time varchar(80),
                           calories int,
                           author varchar(100),
                           review int,
                           rating float,
                           url varchar(100),
                           image varchar(100),
-                          summary varchar(255),
-                          directions varchar(255)
+                          summary BLOB,
+                          directions BLOB
                         )""")
     except mysql.Error as err:
         logger = logging.getLogger(__name__)
         logger.error(f'Failed creating table: {err}"')
-        # TODO raise exception
-        return
+        raise Exception('DB error')
     finally:
         db.close()
 
@@ -58,20 +62,42 @@ def delete_db():
 
 
 def insert_data_to_db(data):
-    """ Insert data from variable 'data' to database tables """
+    """ Insert data to database tables
+        Parameters:
+        data (list of dict): data to upload to database
+    """
     db, cursor = connect_db()
-    for i, record in enumerate(data):
-        cursor.execute("""INSERT INTO recipes VALUES (:cat, :sub_cat, :url, :author, :review, :summary, :name, 
-                        :p_time, :cal, :rating, :img, :dir, :ingr)""",
-                       {'cat': record['category'], 'sub_cat': record['sub_category'], 'url': record['url'],
-                        'author': record['author'], 'review': record['review'], 'summary': record['summary'],
-                        'name': record['name'], 'p_time': record['p_time'], 'cal': record['calories'],
-                        'rating': record['rating'], 'img': record['image'], 'dir': record['directions'],
-                        'ingr': record['ingredients']})
-        if i % 10000 == 0:
-            db.commit()
-    db.commit()
-    db.close()
+    logger = logging.getLogger(__name__)
+    logger.info("Starting to insert data into db")
+    try:
+        for i, record in enumerate(data):
+            cursor.execute(f"USE {DB_NAME}")
+            insert_query = """INSERT INTO recipes (name, category, sub_category, ingredients, prep_time, calories, author, 
+                            review, rating, url, image, summary, directions) 
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+            row = (record['name'], record['category'], record['sub_category'], record['ingredients'], record['prep_time'],
+                   record['calories'], record['author'], record['review'], record['rating'], record['url'], record['image'],
+                   record['summary'], record['directions'])
+            cursor.execute(insert_query, row)
+
+            if i % 10000 == 0:
+                db.commit()
+        db.commit()
+    except mysql.Error as err:
+        logger = logging.getLogger(__name__)
+        logger.error(f'Failed creating table: {err}"')
+        raise Exception('DB error')
+    finally:
+        db.close()
+
+
+def write_data_to_db(data):
+    """ Creates db and tales if not exists, and inserts data into it
+        Parameters:
+        data (list of dict): data to upload to database
+    """
+    create_db()
+    insert_data_to_db(data)
 
 
 def show_db():
@@ -83,17 +109,3 @@ def show_db():
     db.close()
 
 
-def write_data_to_db(category, subcategory, recipes):
-    """ get recipe details for full category 'cat' and write to csv """
-    logger = logging.getLogger(__name__)
-    logger.info(f'Extracting data from category{category} , subcategory {subcategory}')
-    rep_data = rd.get_recipes_details(category, subcategory, recipes)
-    logger.info(f'Appending data to csv file: category{category} , subcategory {subcategory}')
-    rd.write_data_to_csv(rep_data)
-
-
-if __name__ == '__main__':
-    create_db()
-
-    # delete_db()
-    show_db()

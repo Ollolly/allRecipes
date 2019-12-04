@@ -23,7 +23,6 @@ def get_category_links(url, category):
                 links[link.span.text] = link['href']
         except ValueError:
             logging.error(f"Unrecognized category")
-    print(links)
     return links
 
 
