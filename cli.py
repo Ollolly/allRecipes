@@ -47,9 +47,10 @@ def main():
     """ logger initialization """
     logging.config.fileConfig(LOG_CONF)
     logging.info('Scrapping category links')
-    categories = sc.get_valid_categories(URL)
-    args = parse_arguments_advanced(categories)
-    requested_category = args.category
+    categories = sc.get_category_list(URL)
+
+    # args = parse_arguments_advanced(categories)
+    # requested_category = args.category
     link = sc.get_category_link(URL, requested_category)
     logging.info('Scrapping subcategory links')
     subcategory = sc.get_category_links(link, subcategories)
