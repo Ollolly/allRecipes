@@ -1,3 +1,9 @@
+"""
+This module scraps given web links and handles extracted data from it:
+     - extracted recipe details
+     - writes recipe data to csv file
+ """
+
 import requests
 import bs4
 from collections import defaultdict
@@ -10,7 +16,12 @@ from config import RECIPE_DETAILS, FILENAME
 
 
 def get_recipe_details(url):
-    """ Extract recipe details from link """
+    """ Extract recipe details from link
+        Parameters:
+        url (string) : url to scrap
+        Returns:
+        dict : recipe details
+    """
     recipe_data = defaultdict(None)
     page = requests.get(url)
     soup = bs4.BeautifulSoup(page.content, "lxml")
@@ -33,7 +44,14 @@ def get_recipe_details(url):
 
 
 def get_attribute(attrib, path, data):
-    """ extracting the recipe detail """
+    """ extracting the recipe detail
+        Parameters:
+        attrib (string) : variable to extract from data
+        path (string) : tag of attribute
+        data (string) : scrapped data from website
+        Returns:
+        string : rating score
+    """
     result = data.select(path)
     ret_val = None
     if result is not None:
@@ -47,7 +65,12 @@ def get_attribute(attrib, path, data):
 
 
 def get_rating(data):
-    """ extracting the recipe rating """
+    """ extracting the recipe rating
+        Parameters:
+        data (string) : scrapped data from website
+        Returns:
+        string : rating score
+    """
     result = data.find('div', class_="rating-stars")
     ret_val = None
     if result is not None:
@@ -61,7 +84,12 @@ def get_rating(data):
 
 
 def get_image(data):
-    """ extracting the recipe image """
+    """ extracting the recipe image
+        Parameters:
+        data (string) : scrapped data from website
+        Returns:
+        string : link to image
+    """
     result = data.find('img', class_="rec-photo")
     ret_val = None
     if result is not None:
@@ -75,7 +103,12 @@ def get_image(data):
 
 
 def get_directions(data):
-    """ extracting the recipe directions """
+    """ extracting the recipe directions
+        Parameters:
+        data (string) : scrapped data from website
+        Returns:
+        string : directions list
+    """
     result = data.findAll('span', class_="recipe-directions__list--item")
     ret_val = None
     if result is not None:
@@ -85,7 +118,12 @@ def get_directions(data):
 
 
 def get_ingredients(data):
-    """ extracting the recipe ingredients """
+    """ extracting the recipe ingredients
+        Parameters:
+        data (string) : scrapped data from website
+        Returns:
+        string : ingredients list
+    """
     result = data.findAll('span', class_="recipe-ingred_txt added")
     ret_val = None
     if result is not None:
@@ -95,7 +133,12 @@ def get_ingredients(data):
 
 
 def convert_review_to_int(review):
-    """ Gets review value as string and converts it to int """
+    """ Gets review value as string and converts it to int
+        Parameters:
+        review (string) : review score
+        Returns:
+        int : review score
+    """
     if review == '' or review is None:
         return None
 
@@ -115,7 +158,12 @@ def convert_review_to_int(review):
 
 
 def convert_cal_to_int(calories):
-    """ Gets calories value as string and converts it to int """
+    """ Gets calories value as string and converts it to int
+        Parameters:
+        calories (string) : amount of calories
+        Returns:
+        int : amount of calories
+    """
     if calories is None:
         return None
 
@@ -130,7 +178,12 @@ def convert_cal_to_int(calories):
 
 
 def convert_prep_time_to_minutes(prep_time):
-    """ Gets preparation time value as string and converts it to minutes, returns int """
+    """ Gets preparation time value as string and converts it to minutes
+        Parameters:
+        prep_time (string) :  preparation time
+        Returns:
+        int : amount of minutes
+    """
     if prep_time is None:
         return None
 
@@ -146,8 +199,14 @@ def convert_prep_time_to_minutes(prep_time):
 
 
 def get_recipes_details(category, sub_category, urls):
-    """ Extract recipe details for each link from the variable 'urls', and returns it
-        as list of dictionaries """
+    """ Extract recipe details for each link
+        Parameters:
+        category (strings) :  category
+        sub_category (list of strings) : list of subcategories for scraping
+        url (list of string): links for scraping
+        Returns:
+        list of dict : links to recipes, where key is category
+    """
     recipes_data = []
     for url in urls:
         recipe = {'category': category, 'sub_category': sub_category, 'url': url}

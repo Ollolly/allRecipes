@@ -1,3 +1,9 @@
+"""
+This module stands for scraping data from the www.allrecipes.com website:
+The actions of the module:
+    - get list of categories/subcategories
+"""
+
 from bs4 import BeautifulSoup
 import requests
 import logging
@@ -23,7 +29,6 @@ def get_category_links(url, category):
                 links[link.span.text] = link['href']
         except ValueError:
             logging.error(f"Unrecognized category")
-    print(links)
     return links
 
 
