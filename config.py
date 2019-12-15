@@ -1,11 +1,4 @@
-# Constants for the project
-# Scraping keys used in the module recipe_details.py
-RECIPE_DETAILS = ['category', 'sub_category', 'url',
-                  'author', 'review', 'summary', 'name', 'prep_time', 'calories',
-                  'rating', 'image', 'directions', 'ingredients']
-
-# Website for scrapping
-URL = 'https://www.allrecipes.com/'
+# USER CONFIGURATIONS
 
 # Path to CSV file to save output data
 FILENAME = 'recipes_details.csv'

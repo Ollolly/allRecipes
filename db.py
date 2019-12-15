@@ -82,9 +82,10 @@ def insert_data_to_db(data):
             insert_query = """INSERT INTO recipes (name, category, sub_category, ingredients, prep_time, calories, 
                             author, review, rating, url, image, summary, directions) 
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-            row = (record['name'], record['category'], record['sub_category'], record['ingredients'],
-                   record['prep_time'], record['calories'], record['author'], record['review'], record['rating'],
-                   record['url'], record['image'], record['summary'], record['directions'])
+            row = (record['name'], record['category'], record['sub_category'], record['ingredients_description'],
+                   record['ingredients_list'],record['prep_time'], record['calories'], record['author'],
+                   record['review'], record['rating'], record['url'], record['image'], record['summary'],
+                   record['directions'])
             cursor.execute(insert_query, row)
 
             if i % 10000 == 0:

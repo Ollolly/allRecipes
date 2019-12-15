@@ -4,16 +4,15 @@ This module scraps given web links and handles extracted data from it:
      - writes recipe data to csv file
  """
 
+from collections import defaultdict
 import requests
 import bs4
-from collections import defaultdict
-import csv
-import logging
-import re
 import os
-
-from config import RECIPE_DETAILS, FILENAME
-
+import re
+from constants import MEASUREMENTS, RECIPE_DETAILS, INGREDIENTS
+from config import FILENAME
+import csv
+import numpy as np
 
 def get_recipe_details(url):
     """ Extract recipe details from link
@@ -39,7 +38,8 @@ def get_recipe_details(url):
     recipe_data['rating'] = get_rating(soup)
     recipe_data['image'] = get_image(soup)
     recipe_data['directions'] = get_directions(soup)
-    recipe_data['ingredients'] = get_ingredients(soup)
+    recipe_data['ingredients_description'] = get_ingredients(soup)[0]
+    recipe_data['ingredients_list'] = get_ingredients(soup)[1]
     return recipe_data
 
 
@@ -127,9 +127,47 @@ def get_ingredients(data):
     result = data.findAll('span', class_="recipe-ingred_txt added")
     ret_val = None
     if result is not None:
-        ingredients = [tag.text for tag in result]
-        ret_val = ' '.join(ingredients)
-    return ret_val
+        ingredients_description = [edit_ingredient(tag.text) for tag in result]
+        ingredient_list = extract_ingredient([tag.text for tag in result])
+    return [ingredients_description,ingredient_list]
+
+def edit_ingredient(ingredient):
+    """
+    :param ingredient: text description of the ingredients as written in the site
+    :return: list [quantity,ingredient_str] in which quantity is the measurment tool
+    and its' quantity and ingredients is a string description of the recipes' ingredients
+    """
+    if len(ingredient.split())==2:
+        return ingredient.split()[:2]
+    elif np.array([mes not in ingredient for mes in MEASUREMENTS]).all():
+        return ingredient
+    else:
+        try:
+            mes = re.findall(r'([\d /]+) \w',ingredient)
+            mes=mes[0]
+            ind = ingredient.index(mes)
+            quantity = ingredient[:ind+len(mes)]
+            ingredient = ingredient[ind+len(mes):].split()
+            quantity = quantity+' '+ingredient[0]
+            ingredient_str = ' '.join(ingredient[1:])
+            return [quantity,ingredient_str]
+        except IndexError:
+            return  [None,ingredient]
+
+
+def extract_ingredient(list_ingred):
+    """
+    gets ingredients description from get_ingredients, and return list
+    of ingredients associated with the recipe
+    :param : None
+    :return: ingredients list
+    """
+    ingredient_list = []
+    for ing in list_ingred:
+        for ingred in INGREDIENTS:
+            if ingred.lower() in ing.lower():
+                ingredient_list.append(ingred)
+    return ingredient_list
 
 
 def convert_review_to_int(review):

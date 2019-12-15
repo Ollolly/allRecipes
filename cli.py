@@ -10,7 +10,9 @@ import argparse
 import sys
 import scrapping as sc
 import db
-from config import URL, LOG_CONF
+from constants import URL
+from config import LOG_CONF
+
 
 
 def parse_arguments_advanced():
