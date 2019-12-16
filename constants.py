@@ -9,9 +9,16 @@ RECIPE_DETAILS = ['category', 'sub_category', 'url',
                   'author', 'review', 'summary', 'name', 'prep_time', 'calories',
                   'rating', 'image', 'directions', 'ingredients']
 
+
 # Scraping keys used in the module api.py
 ING_DETAILS = ['label', 'enerc_kcal', 'fat', 'procnt','carb','related_recipes']
 
+
+# api url used in extract_extra function in api.py
+API_URL_EXTRA = " http://www.recipepuppy.com/api/"
+
+# api url used in extract_nutrients function in api.py
+API_URL_NUTRIENTS = "https://edamam-food-and-grocery-database.p.rapidapi.com/parser"
 
 # measurments tool used in the module recipe_details.py
 MEASUREMENTS = ('cup', 'cupBars', 'cupcup', 'cupcups', 'cups', 'cupscup', 'cupscups', 'ounce', 'ouncescup',

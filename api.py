@@ -1,41 +1,45 @@
 import requests
 import logging
-from constants import INGREDIENTS
+from constants import INGREDIENTS, API_URL_EXTRA, API_URL_NUTRIENTS
 
 
 def extract_extra(ing):
     """
-    :param ing: Receive name of ingredient(ing)
-    :return:  list of recipes associated with this ingredient, for each recipe the following data
+    :param ing: name of ingredient(ing) as specified by the user
+    :return list of recipes associated with this ingredient, for each recipe the following data
     is provided: title, url, img
     """
-    url = " http://www.recipepuppy.com/api/"
-    l = []
+    lst = []
     try:
         querystring = {"i": ing}
         headers = {
             'x-rapidapi-host': "recipe-puppy.p.rapidapi.com",
             'x-rapidapi-key': "56ae2ccbf4mshf55a5b55145a40ep1472b9jsn6a8637a31483"
         }
-        response = requests.request("GET", url, headers=headers, params=querystring)
+        response = requests.request("GET", API_URL_EXTRA, headers=headers, params=querystring)
         data = response.json()
         for recipe in data['results']:
-            l.append({'title':recipe['title'], 'url':recipe['href'], 'img':recipe['thumbnail']})
-        return l
+            lst.append({'title':recipe['title'], 'url':recipe['href'], 'img':recipe['thumbnail']})
+        return lst
     except:
+        logger = logging.getLogger(__name__)
+        logger.warning(f"Failed to extract extra details for the ingredient {ing}")
         return
 
 
 def extract_nutrients(ing):
-
-    url = "https://edamam-food-and-grocery-database.p.rapidapi.com/parser"
+    """
+    :param ing: name of ingredient(ing) as specified by the user
+    :return tuple of the following dietary values of associated with the specified ingredient:
+    label(ingredient name), enerc_kcal(ingredient calories), fat, procnt (proteins), carb (carbohydrate)
+    """
     try:
         querystring = {"ingr":ing}
         headers = {
             'x-rapidapi-host': "edamam-food-and-grocery-database.p.rapidapi.com",
             'x-rapidapi-key': "56ae2ccbf4mshf55a5b55145a40ep1472b9jsn6a8637a31483"
             }
-        response = requests.request("GET", url, headers=headers, params=querystring)
+        response = requests.request("GET", API_URL_NUTRIENTS, headers=headers, params=querystring)
         data =response.json()
         label = data['hints'][0]['food']['label']
 
@@ -52,6 +56,13 @@ def extract_nutrients(ing):
 
 
 def get_info_ingred():
+    """
+    unify all data extracted from the APIs regarding the ingredients into one list of dictionaries
+    :return: list of dictionaries where each dictionary indicate a row, containing the following
+    fields: label(ingredient name), enerc_kcal(ingredient calories), fat, procnt (proteins),
+    carb (carbohydrate), related_recipes(dictionary with the following data regarding each ingredient:
+    title, url, img)
+    """
     logger = logging.getLogger(__name__)
     logger.info(f"Starting api scrapping")
     ing_data=[]
