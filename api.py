@@ -1,14 +1,13 @@
 import requests
-from pprint import pprint
-from collections import defaultdict
-from constants import INGREDIENTS, ING_DETAILS
+import logging
+from constants import INGREDIENTS
 
 
 def extract_extra(ing):
     """
     :param ing: Receive name of ingredient(ing)
     :return:  list of recipes associated with this ingredient, for each recipe the following data
-    is provided: name, url
+    is provided: title, url, img
     """
     url = " http://www.recipepuppy.com/api/"
     l = []
@@ -41,15 +40,16 @@ def extract_nutrients(ing):
         label = data['hints'][0]['food']['label']
 
         if label.lower().strip()==ing.lower().strip():
-            cal = data['hints'][0]['food']['nutrients']['ENERC_KCAL']
+            enerc_kcal = data['hints'][0]['food']['nutrients']['ENERC_KCAL']
             fat = data['hints'][0]['food']['nutrients']['FAT']
-            proteins = data['hints'][0]['food']['nutrients']['PROCNT']
-            car = data['hints'][0]['food']['nutrients']['CHOCDF']
-            return label, cal, fat, proteins, car
+            procnt = data['hints'][0]['food']['nutrients']['PROCNT']
+            carb = data['hints'][0]['food']['nutrients']['CHOCDF']
+            return label, enerc_kcal, fat, procnt, carb
     except:
         logger = logging.getLogger(__name__)
-        logger.warning(f"Failed to extract nutrients details for {label}")
+        logger.warning(f"Failed to extract nutrients details for {ing}")
         return
+
 
 def get_info_ingred():
     logger = logging.getLogger(__name__)
@@ -57,26 +57,24 @@ def get_info_ingred():
     ing_data=[]
     for ing in INGREDIENTS:
         ingred_data = {}
-        try:
-            if extract_nutrients(ing) is None:
-                label, cal, fat, proteins, car = None*5
-            else:
-                label, cal, fat, proteins, car = extract_nutrients(ing)
-            ingred_data['label'] = ing
-            ingred_data['cal'] = cal
-            ingred_data['fat'] = fat
-            ingred_data['proteins'] = proteins
-            ingred_data['car'] = car
+        if extract_nutrients(ing) is None:
+            label, enerc_kcal, fat, procnt, carb = None, None, None, None, None
+        else:
+            label, enerc_kcal, fat, procnt, carb = extract_nutrients(ing)
+        ingred_data['label'] = ing
+        ingred_data['enerc_kcal'] = enerc_kcal
+        ingred_data['fat'] = fat
+        ingred_data['procnt'] = procnt
+        ingred_data['carb'] = carb
 
 
-            if extract_extra(ing) is None:
-                extra = []
-            else:
-                extra = extract_extra(ing)
-            ingred_data['related_recipes']=extra
-            ing_data.append(ingred_data)
-        except:
-            ing_data.append({})
+        if extract_extra(ing) is None:
+            extra = []
+        else:
+            extra = extract_extra(ing)
+        ingred_data['related_recipes']=extra
+        ing_data.append(ingred_data)
+
     return ing_data
 
 

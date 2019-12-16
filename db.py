@@ -170,6 +170,3 @@ def write_data_to_db(data_sc, data_api=None):
     """
     create_db()
     insert_scrapped_data_to_db(data_sc)
-
-
-print(sorted(INGREDIENTS))
