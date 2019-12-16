@@ -40,7 +40,7 @@ def extract_nutrients(ing):
             'x-rapidapi-key': "56ae2ccbf4mshf55a5b55145a40ep1472b9jsn6a8637a31483"
             }
         response = requests.request("GET", API_URL_NUTRIENTS, headers=headers, params=querystring)
-        data =response.json()
+        data = response.json()
         label = data['hints'][0]['food']['label']
 
         if label.lower().strip()==ing.lower().strip():
@@ -78,14 +78,11 @@ def get_info_ingred():
         ingred_data['procnt'] = procnt
         ingred_data['carb'] = carb
 
-
         if extract_extra(ing) is None:
             extra = []
         else:
             extra = extract_extra(ing)
-        ingred_data['related_recipes']=extra
+        ingred_data['related_recipes'] = extra
         ing_data.append(ingred_data)
 
     return ing_data
-
-

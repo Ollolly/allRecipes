@@ -112,10 +112,4 @@ class Cli:
                 data_api = api.get_info_ingred()
                 sc.write_data_to_csv(data_sc, REC_FILENAME, RECIPE_DETAILS)
                 sc.write_data_to_csv(data_api, ING_FILENAME, ING_DETAILS)
-
-                # db.write_data_to_db(data_sc, data_api)
-
-
-
-
-
+                db.write_data_to_db(data_sc, data_api)
