@@ -14,39 +14,36 @@ ING_DETAILS = ['label', 'enerc_kcal', 'fat', 'procnt','chocdf','related_recipes'
 
 
 # measurments tool used in the module recipe_details.py
-MEASUREMENTS = ('cup','cupBars','cupcup','cupcups','cups','cupscup','cupscups','ounce','ouncescup',
-                'pinch','pound','ripe','tablespoon','tablespoons','teaspoon','teaspooncup',
-                'teaspooncups','teaspoons','teaspoonscup','teaspoonsounce','verycup')
+MEASUREMENTS = ('cup', 'cupBars', 'cupcup', 'cupcups', 'cups', 'cupscup', 'cupscups', 'ounce', 'ouncescup',
+                'pinch', 'pound', 'ripe', 'tablespoon', 'tablespoons', 'teaspoon', 'teaspooncup',
+                'teaspooncups', 'teaspoons', 'teaspoonscup', 'teaspoonsounce', 'verycup')
 
 
-MEASUREMENTS_DICT = {'cup': ['cup','cupBars','cupcup','cupcups','cups','cupscup','cupscups','ouncescup','verycup'],
-                     'ounce': ['ounce', 'pinch'], 'pound': ['pound'],
-                     'tablespoon': ['tablespoon','tablespoons'],
-                     'teaspoon': ['teaspoon','teaspooncup','teaspooncups','teaspoons','teaspoonscup','teaspoonsounce'],
-                     'item': []}
+MEASUREMENTS_DICT = {'cup': ['cup', 'cupBars', 'cupcup', 'cupcups', 'cups', 'cupscup', 'cupscups', 'ouncescup', 'verycup'],
+                     'ounce': ['ounce', 'ounces', 'pinch'], 'pound': ['pound'],
+                     'tablespoon': ['tablespoon', 'tablespoons'],
+                     'teaspoon': ['teaspoon', 'teaspooncup', 'teaspooncups', 'teaspoons', 'teaspoonscup', 'teaspoonsounce'],
+                     'item': ['item']}
 
 
 # measurments tool used in the module recipe_details.py
-INGREDIENTS = ('cucamber', 'pimento', 'wheat', 'asparagus', 'garlic', 'oil', 'cider', 'maraschino',
-               'cherries', 'pecan', 'raspberries', 'rib', 'olive', 'sugar', 'baking powder',
-               'cayenne', 'raisins', 'spinach', 'celery', 'onion', 'anchovy', 'beer', 'tuna',
-               'potato', 'beans','soy', 'pomegranate', 'vinaigrette', 'oregano', 'cranberries',
-               'peach', 'Dijon', 'seaweed','butter', 'fish', 'liqueur', 'lemon', 'parsley',
-               'pepper', 'sweet potato', 'hazelnuts', 'chickpeas', 'Cheddar', 'yeast', 'lime',
-               'buckwheat', 'broccoli', 'salt', 'graham', 'seeds', 'wine', 'horseradish', 'cloves',
-               'broth', 'mustard', 'almonds', 'cornbread', 'mascarpone', 'potatoes', 'apple',
-               'peanut', 'duck', 'stalks', 'glutenfree', 'orange juice', 'coconut', 'pears',
-               'rosemary', 'poultry', 'orange', 'pumpkin', 'halves', 'cheese', 'water', 'canola',
-               'bonein', 'rum', 'sage', 'milk', 'gelatin', 'cocoa', 'strawberries', 'farina',
-               'cherry', 'chicken', 'basil', 'hens', 'vanilla extract', 'seed', 'anise',
-               'marshmallows', 'raspberry', 'grapes', 'lobster', 'goat cheese', 'alfalfa',
-               'blackberry', 'sprouts', 'carrot', 'bourbon', 'vinegar', 'paprika', 'cereal', 'nuts',
-               'jam', 'shallots', 'honey', 'yolk', 'chocolate', 'sauerkraut', 'leaf', 'greens',
-               'peppermint', 'whiskey', 'tenderloin', 'eggnog', 'cucumbers', 'flour', 'beef',
-               'kidney', 'cranberry', 'liver', 'oat', 'lettuce', 'margarine', 'banana', 'molasses',
-               'walnut', 'feta', 'cinnamon', 'almond', 'salami', 'zest', 'rice', 'bread', 'soda',
-               'avocado', 'mushroom', 'olive oil', 'Condensed milk', 'pudding', 'nutmeg', 'ham',
-               'goose', 'corn', 'buttermilk', 'lemonlime', 'cornstarch', 'pork', 'ginger', 'yogurt',
-               'beet', 'pecans', 'egg', 'Pudding', 'leaves', 'balsamic', 'mayonnaise', 'pineapple',
-               'mandarin', 'bacon', 'brussels', 'crumbs', 'Parmesan', 'tomato', 'romaine', 'cream',
-               'sesame', 'maple', 'blueberries', 'chips', 'turkey', 'curry', 'salmon')
+INGREDIENTS = ('alfalfa', 'almond', 'almonds', 'anchovy', 'anise', 'apple', 'asparagus', 'avocado', 'bacon',
+               'baking powder', 'balsamic', 'banana', 'basil', 'beans', 'beef', 'beer', 'beet', 'blackberry',
+               'blueberries', 'bonein', 'bourbon', 'bread', 'brandy', 'broccoli', 'broth', 'brussels', 'buckwheat',
+               'butter', 'buttermilk', 'canola', 'carrot', 'cayenne', 'celery', 'cereal', 'cheddar', 'cheese', 'cherries',
+               'cherry', 'chicken', 'chickpeas', 'chips', 'chocolate', 'cider', 'cinnamon', 'cloves', 'cocoa',
+               'coconut', 'condensed milk', 'corn', 'cornbread', 'cornstarch', 'cranberries', 'cranberry', 'cream',
+               'crumbs', 'cucamber', 'cucumbers', 'curry', 'dijon', 'duck', 'egg', 'eggnog', 'farina', 'feta', 'fish',
+               'flour', 'garlic', 'gelatin', 'ginger', 'glutenfree', 'goat cheese', 'goose', 'graham', 'grapes',
+               'greens', 'halves', 'ham', 'hazelnuts', 'hens', 'honey', 'horseradish', 'jam', 'jimmies', 'kidney',
+               'leaf', 'leaves', 'lemon', 'lemonlime', 'lettuce', 'lime', 'liqueur', 'liver', 'lobster', 'mandarin',
+               'maple', 'maraschino', 'margarine', 'marshmallows', 'mascarpone', 'mayonnaise', 'milk', 'molasses',
+               'mushroom', 'mustard', 'nutmeg', 'nuts', 'oat', 'oil', 'olive', 'olive oil', 'onion', 'orange',
+               'orange juice', 'oregano', 'paprika', 'parmesan', 'parsley', 'peach', 'peanut', 'pears', 'pecan',
+               'pecans', 'pepper', 'peppermint', 'pimento', 'pineapple', 'pomegranate', 'pork', 'potato', 'potatoes',
+               'poultry', 'pudding', 'pudding', 'pumpkin', 'raisins', 'raspberries', 'raspberry', 'rib', 'rice',
+               'romaine', 'rosemary', 'rum', 'sage', 'salami', 'salmon', 'salt', 'sauerkraut', 'seaweed', 'seed',
+               'seeds', 'sesame', 'shallots', 'soda', 'soy', 'spinach', 'sprouts', 'stalks', 'strawberries', 'sugar',
+               'sweet potato', 'tenderloin', 'tomato', 'tuna', 'turkey', 'vanilla extract', 'vinaigrette', 'vinegar',
+               'walnut', 'water', 'wheat', 'whiskey', 'wine', 'yeast', 'yogurt', 'yolk', 'zest')
+
