@@ -19,7 +19,7 @@ def extract_extra(ing):
         response = requests.request("GET", API_URL_EXTRA, headers=headers, params=querystring)
         data = response.json()
         for recipe in data['results']:
-            lst.append({'title':recipe['title'], 'url':recipe['href'], 'img':recipe['thumbnail']})
+            lst.append({'title': recipe['title'], 'url': recipe['href'], 'img': recipe['thumbnail']})
         return lst
     except:
         logger = logging.getLogger(__name__)
@@ -72,7 +72,7 @@ def get_info_ingred():
             label, enerc_kcal, fat, procnt, carb = None, None, None, None, None
         else:
             label, enerc_kcal, fat, procnt, carb = extract_nutrients(ing)
-        ingred_data['label'] = ing
+        ingred_data['label'] = ing.strip()
         ingred_data['enerc_kcal'] = enerc_kcal
         ingred_data['fat'] = fat
         ingred_data['procnt'] = procnt
