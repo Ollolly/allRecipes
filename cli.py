@@ -10,6 +10,8 @@ import sys
 import logging
 from constants import URL
 import db
+import api
+from config import REC_FILENAME, RECIPE_DETAILS
 
 
 class Cli:
@@ -17,7 +19,6 @@ class Cli:
     def __init__(self):
         self.args = None
         self.logger = logging.getLogger(__name__)
-
 
     def parse_arguments_advanced(self):
         """ Processing and storing the arguments of the program
@@ -107,7 +108,7 @@ class Cli:
                 data = sc.scrap_data(cat, recipes)
                 self.logger.debug(data)
                 # sc.write_data_to_csv(data)
-                db.write_data_to_db(data)
+                db.write_data_to_db(data, REC_FILENAME, RECIPE_DETAILS)
 
 
 

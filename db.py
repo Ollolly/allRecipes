@@ -81,7 +81,9 @@ def create_db():
         cursor.execute(f"""CREATE TABLE IF NOT EXISTS api_data (
                             id int PRIMARY KEY AUTO_INCREMENT,
                             ingd_id int,
+                            recipe_name varchar(255),
                             url varchar(255),
+                            image varchar(255),
                             FOREIGN KEY (ingd_id) REFERENCES ingredients (id)
                         )""")
 
@@ -137,7 +139,3 @@ def write_data_to_db(data):
     """
     create_db()
     insert_data_to_db(data)
-
-
-
-create_db()

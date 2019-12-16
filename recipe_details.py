@@ -127,6 +127,7 @@ def get_ingredients(data):
         string : ingredients list
     """
     result = data.findAll('span', class_="recipe-ingred_txt added")
+    ret_val = None
     if result is not None:
         ingredients_description = [edit_ingredient(tag.text) for tag in result]
         ingredient_list = extract_ingredient([tag.text for tag in result])
@@ -257,17 +258,16 @@ def get_recipes_details(category, sub_category, urls):
     return recipes_data
 
 
-def write_data_to_csv(recipes_data):
+def write_data_to_csv(recipes_data, filname, headers):
     """ Appending the data to csv file
         Parameters:
         recipes_data (list if dict): data to write to file
     """
     is_file_exists = False
-    if os.path.exists(FILENAME):
+    if os.path.exists(filname):
         is_file_exists = True
 
-    with open(FILENAME, 'a', newline='') as csv_output:
-        headers = RECIPE_DETAILS
+    with open(filname, 'a', newline='') as csv_output:
         csv_writer = csv.DictWriter(csv_output, headers)
         if not is_file_exists:
             csv_writer.writeheader()
