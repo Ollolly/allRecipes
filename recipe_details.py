@@ -220,18 +220,27 @@ def convert_prep_time_to_minutes(prep_time):
         Returns:
         int : amount of minutes
     """
-    if prep_time is None:
+    if prep_time is None :
         return None
 
-    minutes = None
-    try:
-        # TODO
-        minutes = prep_time
-    except ValueError:
-        logger = logging.getLogger(__name__)
-        logger.warning(f'Failed to convert preparation time to int')
+    tot_in_min = 0
+    prep_time = prep_time.replace(" ", "")
+    for i, ch in enumerate(prep_time):
+        if 'h' in prep_time:
+            if ch == 'h':
+                tot_in_min += int(prep_time[i - 1]) * 60
+                rest_prep_time = prep_time[i + 1:].strip('hm ')
+                if rest_prep_time!= "":
+                    tot_in_min += int(rest_prep_time)
+                    break
+                break
 
-    return minutes
+        else:
+            rest_prep_time = prep_time.strip('m ')
+            tot_in_min += int(rest_prep_time)
+            break
+
+    return tot_in_min
 
 
 def get_recipes_details(category, sub_category, urls):
