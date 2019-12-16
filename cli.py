@@ -108,9 +108,9 @@ class Cli:
                 self.logger.debug(cat)
                 self.logger.debug(sub_cat)
                 data_sc = sc.scrap_data(cat, recipes)
-                data_api = api.get_info_ingred()
+                # data_api = api.get_info_ingred()
                 sc.write_data_to_csv(data_sc, REC_FILENAME, RECIPE_DETAILS)
-                db.write_data_to_db(data_sc, data_api)
+                # db.write_data_to_db(data_sc, data_api)
 
 
 
