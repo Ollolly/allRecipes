@@ -132,10 +132,11 @@ def insert_data_to_db(data):
         db.close()
 
 
-def write_data_to_db(data):
+def write_data_to_db(data_sc, data_api=None):
     """ Creates db and tales if not exists, and inserts data into it
         Parameters:
-        data (list of dict): data to upload to database
+        data_sc (list of dict): data from scrapping to upload to database
+        data_api (list of dict): data from api to upload to databases
     """
     create_db()
-    insert_data_to_db(data)
+    insert_data_to_db(data_sc)

@@ -41,28 +41,32 @@ def extract_nutrients(ing):
         label = data['hints'][0]['food']['label']
 
         if label.lower().strip()==ing.lower().strip():
-            ENERC_KCAL = data['hints'][0]['food']['nutrients']['ENERC_KCAL']
-            FAT = data['hints'][0]['food']['nutrients']['FAT']
-            PROCNT = data['hints'][0]['food']['nutrients']['PROCNT']
-            CHOCDF = data['hints'][0]['food']['nutrients']['CHOCDF']
-            return label, ENERC_KCAL, FAT, PROCNT, CHOCDF
+            cal = data['hints'][0]['food']['nutrients']['ENERC_KCAL']
+            fat = data['hints'][0]['food']['nutrients']['FAT']
+            proteins = data['hints'][0]['food']['nutrients']['PROCNT']
+            car = data['hints'][0]['food']['nutrients']['CHOCDF']
+            return label, cal, fat, proteins, car
     except:
+        logger = logging.getLogger(__name__)
+        logger.warning(f"Failed to extract nutrients details for {label}")
         return
 
 def get_info_ingred():
+    logger = logging.getLogger(__name__)
+    logger.info(f"Starting api scrapping")
     ing_data=[]
     for ing in INGREDIENTS:
         ingred_data = {}
         try:
             if extract_nutrients(ing) is None:
-                label, ENERC_KCAL, FAT, PROCNT, CHOCDF = None, None, None, None
+                label, cal, fat, proteins, car = None*5
             else:
-                label, ENERC_KCAL, FAT, PROCNT, CHOCDF = extract_nutrients(ing)
-            ingred_data['label']=ing
-            ingred_data['ENERC_KCAL']=ENERC_KCAL
-            ingred_data['FAT']=FAT
-            ingred_data['PROCNT']=PROCNT
-            ingred_data['CHOCDF']=CHOCDF
+                label, cal, fat, proteins, car = extract_nutrients(ing)
+            ingred_data['label'] = ing
+            ingred_data['cal'] = cal
+            ingred_data['fat'] = fat
+            ingred_data['proteins'] = proteins
+            ingred_data['car'] = car
 
 
             if extract_extra(ing) is None:
