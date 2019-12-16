@@ -10,7 +10,8 @@ RECIPE_DETAILS = ['category', 'sub_category', 'url',
                   'rating', 'image', 'directions', 'ingredients']
 
 # Scraping keys used in the module api.py
-ING_DETAILS = ['label', 'enerc_kcal', 'fat', 'procnt','chocdf','related_recipes']
+ING_DETAILS = ['label', 'enerc_kcal', 'fat', 'procnt', 'carb', 'related_recipes']
+RELATED_RECIPES = ['url', 'img']
 
 
 # measurments tool used in the module recipe_details.py

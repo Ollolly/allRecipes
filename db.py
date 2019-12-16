@@ -31,6 +31,7 @@ def create_db():
         # crete database
         cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}")
     except mysql.Error as err:
+        cursor.close()
         db.close()
         logger = logging.getLogger(__name__)
         logger.error(f'Failed creating database: {err}"')
@@ -66,7 +67,7 @@ def create_db():
                             enerc_kcal float,
                             procnt float,
                             fat float,
-                            chocdf float,
+                            carb float,
                             FOREIGN KEY (ingd_id) REFERENCES ingredients (id)
                         )""")
 
@@ -92,6 +93,7 @@ def create_db():
         logger.error(f'Failed creating table: {err}"')
         raise Exception('DB error')
     finally:
+        cursor.close()
         db.close()
 
 
@@ -99,36 +101,43 @@ def delete_db():
     """ Deletes a database """
     db, cursor = connect_db()
     cursor.execute(f"DROP DATABASE {DB_NAME}")
+    cursor.close()
     db.close()
 
 
-def insert_constant_data_to_db(data):
-    """ Insert data to database tables
-        Parameters:
-        data (list of dict): data to upload to database
+def select_ingredients():
+    """ selects ingredients from db and return them as dict
+        return:
+        dict: key is a ingredients, value it's id
     """
+    db, cursor = connect_db()
+    cursor.execute(f"USE {DB_NAME}")
+    cursor.execute("SELECT * FROM ingredients")
+    result = cursor.fetchall()
+    cursor.close()
+    db.close()
+    dct = {k: v for v, k in result}
+    return dct
+
+
+def insert_constant_data_to_db():
+    """ Insert constant data from file "constants.py" to 'in'gredients' table """
     db, cursor = connect_db()
     logger = logging.getLogger(__name__)
     logger.info("Starting to insert data into db")
     try:
-        for i, record in enumerate(data):
+        for record in INGREDIENTS:
             cursor.execute(f"USE {DB_NAME}")
-            insert_query = """INSERT INTO recipes (name, category, sub_category, prep_time, calories, 
-                            author, review, rating, url, image, summary, directions) 
-                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-            row = (record['name'], record['category'], record['sub_category'], record['prep_time'],
-                   record['calories'], record['author'], record['review'], record['rating'],
-                   record['url'], record['image'], record['summary'], record['directions'])
-            cursor.execute(insert_query, row)
+            insert_query = """INSERT INTO ingredients (name) VALUES (%s)"""
+            cursor.execute(insert_query, (record,))
 
-            if i % 10000 == 0:
-                db.commit()
         db.commit()
     except mysql.Error as err:
         logger = logging.getLogger(__name__)
         logger.error(f'Failed creating table: {err}"')
         raise Exception('DB error')
     finally:
+        cursor.close()
         db.close()
 
 
@@ -159,17 +168,52 @@ def insert_scrapped_data_to_db(data):
         logger.error(f'Failed creating table: {err}"')
         raise Exception('DB error')
     finally:
+        cursor.close()
         db.close()
 
 
-def write_data_to_db(data_sc, data_api=None):
+def insert_api_data_to_db(data):
+    """ Insert data to database tables
+        Parameters:
+        data (list of dict): data to upload to database
+    """
+    db, cursor = connect_db()
+    logger = logging.getLogger(__name__)
+    logger.info("Starting to insert data into db")
+    try:
+        ing = select_ingredients()
+        for i, record in enumerate(data):
+            cursor.execute(f"USE {DB_NAME}")
+            insert_query = """INSERT INTO api_data (ingd_id, recipe_name, url, image) 
+                            VALUES (%s, %s, %s, %s)"""
+
+            for title,  links in data['related_recipes'].items():
+                row = (record[ing['name']], title, links['url'], links['img'])
+            cursor.execute(insert_query, row)
+            if i % 10000 == 0:
+                db.commit()
+        db.commit()
+    except mysql.Error as err:
+        logger = logging.getLogger(__name__)
+        logger.error(f'Failed creating table: {err}"')
+        raise Exception('DB error')
+    finally:
+        cursor.close()
+        db.close()
+
+
+def write_data_to_db(data_sc, data_api):
     """ Creates db and tales if not exists, and inserts data into it
         Parameters:
         data_sc (list of dict): data from scrapping to upload to database
         data_api (list of dict): data from api to upload to databases
     """
     create_db()
+    insert_constant_data_to_db()
     insert_scrapped_data_to_db(data_sc)
+    insert_api_data_to_db(data_api)
 
+# create_db()
+# insert_constant_data_to_db()
 
-print(sorted(INGREDIENTS))
+# print(select_ingredients())
