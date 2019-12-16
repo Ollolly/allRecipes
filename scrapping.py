@@ -83,7 +83,7 @@ def scrap_data(category, subcategories_links):
     return rep_data
 
 
-def write_data_to_csv(data):
+def write_data_to_csv(data, filename, headers):
     """ get recipe details and write it to csv
         Parameters:
         data (list of dict): data to write to csv file
@@ -92,4 +92,4 @@ def write_data_to_csv(data):
     """
     logger = logging.getLogger(__name__)
     logger.info(f'Appending data to csv file')
-    rd.write_data_to_csv(data)
+    rd.write_data_to_csv(data, filename, headers)

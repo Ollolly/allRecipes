@@ -9,9 +9,10 @@ import logging.config
 import argparse
 import sys
 import scrapping as sc
+import api
 import db
-from constants import URL
-from config import LOG_CONF
+from constants import URL, INGREDIENTS, ING_DETAILS, RECIPE_DETAILS
+from config import LOG_CONF, ING_FILENAME, REC_FILENAME
 
 
 
@@ -54,6 +55,12 @@ def parse_arguments_advanced():
 def main():
     """ The main function executes the program """
     logging.config.fileConfig(LOG_CONF)
+    logging.info('Writing ingredients info')
+    info_ingredients = api.get_info_ingred()
+    # print(info_ingredients)
+    sc.write_data_to_csv(info_ingredients, ING_FILENAME, ING_DETAILS)
+    #
+    #
     logging.info('Scrapping category links')
     args = parse_arguments_advanced()
     # in case l is given alone
@@ -87,7 +94,7 @@ def main():
             logging.debug(sub_cat_links)
             data = sc.scrap_data(cat, recipes)
             logging.debug(data)
-            sc.write_data_to_csv(data)
+            sc.write_data_to_csv(data, REC_FILENAME, RECIPE_DETAILS)
             db.write_data_to_db(data)
 
 

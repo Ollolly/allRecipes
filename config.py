@@ -1,7 +1,8 @@
 # USER CONFIGURATIONS
 
 # Path to CSV file to save output data
-FILENAME = 'recipes_details.csv'
+REC_FILENAME = 'recipes_details.csv'
+ING_FILENAME = 'ingredients.csv'
 
 # Path to logger configuration file
 LOG_CONF = 'logging.conf'
