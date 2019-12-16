@@ -7,7 +7,7 @@ URL = 'https://www.allrecipes.com/'
 # Scraping keys used in the module recipe_details.py
 RECIPE_DETAILS = ['category', 'sub_category', 'url',
                   'author', 'review', 'summary', 'name', 'prep_time', 'calories',
-                  'rating', 'image', 'directions', 'ingredients_description','ingredients_list']
+                  'rating', 'image', 'directions', 'ingredients']
 
 # Scraping keys used in the module api.py
 ING_DETAILS = ['label', 'enerc_kcal', 'fat', 'procnt','chocdf','related_recipes']
@@ -17,6 +17,13 @@ ING_DETAILS = ['label', 'enerc_kcal', 'fat', 'procnt','chocdf','related_recipes'
 MEASUREMENTS = ('cup','cupBars','cupcup','cupcups','cups','cupscup','cupscups','ounce','ouncescup',
                 'pinch','pound','ripe','tablespoon','tablespoons','teaspoon','teaspooncup',
                 'teaspooncups','teaspoons','teaspoonscup','teaspoonsounce','verycup')
+
+
+MEASUREMENTS_DICT = {'cup': ['cup','cupBars','cupcup','cupcups','cups','cupscup','cupscups','ouncescup','verycup'],
+                     'ounce': ['ounce', 'pinch'], 'pound': ['pound'],
+                     'tablespoon': ['tablespoon','tablespoons'],
+                     'teaspoon': ['teaspoon','teaspooncup','teaspooncups','teaspoons','teaspoonscup','teaspoonsounce'],
+                     'item': []}
 
 
 # measurments tool used in the module recipe_details.py

@@ -12,7 +12,7 @@ import re
 import logging
 import csv
 import numpy as np
-from constants import MEASUREMENTS, RECIPE_DETAILS, INGREDIENTS
+from constants import MEASUREMENTS, RECIPE_DETAILS, INGREDIENTS, MEASUREMENTS_DICT
 
 
 def get_recipe_details(url):
@@ -39,8 +39,7 @@ def get_recipe_details(url):
     recipe_data['rating'] = get_rating(soup)
     recipe_data['image'] = get_image(soup)
     recipe_data['directions'] = get_directions(soup)
-    recipe_data['ingredients_description'] = get_ingredients(soup)[0]
-    recipe_data['ingredients_list'] = get_ingredients(soup)[1]
+    recipe_data['ingredients'] = get_ingredients(soup)
     return recipe_data
 
 
@@ -123,53 +122,50 @@ def get_ingredients(data):
         Parameters:
         data (string) : scrapped data from website
         Returns:
-        string : ingredients list
+        ingredients_measurements - list of tuples
     """
     result = data.findAll('span', class_="recipe-ingred_txt added")
-    ret_val = None
     if result is not None:
-        ingredients_description = [edit_ingredient(tag.text) for tag in result]
-        ingredient_list = extract_ingredient([tag.text for tag in result])
-    return [ingredients_description, ingredient_list]
+        ingredients_measurements = [edit_ingredient(tag.text) for tag in result]
+        ingredients_measurements = [x for x in ingredients_measurements if x is not None]
+        return ingredients_measurements
 
 
-def edit_ingredient(ingredient):
+def edit_ingredient(line):
     """
-    :param ingredient: text description of the ingredients as written in the site
-    :return: list [quantity,ingredient_str] in which quantity is the measurment tool
-    and its' quantity and ingredients is a string description of the recipes' ingredients
+    parses a line of ingredient description to the following format:
+    quantity, measurement_tool, ingredient
+    :param line: text description of the ingredients as written in the site
+    :return: tuple (quantity, measurement_tool, ingredient)
     """
-    if len(ingredient.split()) == 2:
-        return ingredient.split()[:2]
-    elif np.array([mes not in ingredient for mes in MEASUREMENTS]).all():
-        return ingredient
+    try:
+        num = re.findall(r'([\d /]+) \w', line)
+        num = num[0]
+        start_idx = line.index(num)
+        quantity = line[:start_idx + len(num)]
+        ingredient = line[start_idx + len(num):].split()
+        measurement_tool = ingredient[0]
+        ingredient = ' '.join(ingredient[1:])
+    except IndexError:
+        logger = logging.getLogger(__name__)
+        logger.warning(f'Failed to get ingredient measurement')
+        return None
+
+    for k, v in MEASUREMENTS_DICT.items():
+        if measurement_tool in v:
+            measurement_tool = k
+            break
+
+    for ing in INGREDIENTS:
+        if ing in ingredient.lower().strip():
+            ingredient = ing
+            break
     else:
-        try:
-            mes = re.findall(r'([\d /]+) \w',ingredient)
-            mes = mes[0]
-            ind = ingredient.index(mes)
-            quantity = ingredient[:ind+len(mes)]
-            ingredient = ingredient[ind+len(mes):].split()
-            quantity = quantity+' '+ingredient[0]
-            ingredient_str = ' '.join(ingredient[1:])
-            return [quantity, ingredient_str]
-        except IndexError:
-            return [None, ingredient]
+        logger = logging.getLogger(__name__)
+        logger.warning(f'Failed to get validate ingredient: {ingredient}')
+        return None
 
-
-def extract_ingredient(list_ingd):
-    """
-    gets ingredients description from get_ingredients, and return list
-    of ingredients associated with the recipe
-    :param : None
-    :return: ingredients list
-    """
-    ingredient_list = []
-    for ing in list_ingd:
-        for ingd in INGREDIENTS:
-            if ingd.lower() in ing.lower():
-                ingredient_list.append(ingd)
-    return ingredient_list
+    return quantity, measurement_tool, ingredient
 
 
 def convert_review_to_int(review):
