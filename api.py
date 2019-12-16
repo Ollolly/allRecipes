@@ -44,7 +44,8 @@ def extract_nutrients(ing):
             ENERC_KCAL = data['hints'][0]['food']['nutrients']['ENERC_KCAL']
             FAT = data['hints'][0]['food']['nutrients']['FAT']
             PROCNT = data['hints'][0]['food']['nutrients']['PROCNT']
-            return label, ENERC_KCAL, FAT, PROCNT
+            CHOCDF = data['hints'][0]['food']['nutrients']['CHOCDF']
+            return label, ENERC_KCAL, FAT, PROCNT, CHOCDF
     except:
         return
 
@@ -54,13 +55,16 @@ def get_info_ingred():
         ingred_data = {}
         try:
             if extract_nutrients(ing) is None:
-                label, ENERC_KCAL, FAT, PROCNT = None, None, None, None
+                label, ENERC_KCAL, FAT, PROCNT, CHOCDF = None, None, None, None
             else:
-                label, ENERC_KCAL, FAT, PROCNT = extract_nutrients(ing)
+                label, ENERC_KCAL, FAT, PROCNT, CHOCDF = extract_nutrients(ing)
             ingred_data['label']=ing
             ingred_data['ENERC_KCAL']=ENERC_KCAL
             ingred_data['FAT']=FAT
             ingred_data['PROCNT']=PROCNT
+            ingred_data['CHOCDF']=CHOCDF
+
+
             if extract_extra(ing) is None:
                 extra = []
             else:
