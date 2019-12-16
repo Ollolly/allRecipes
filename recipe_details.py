@@ -9,9 +9,12 @@ import requests
 import bs4
 import os
 import re
-from constants import MEASUREMENTS, RECIPE_DETAILS, INGREDIENTS
+import logging
 import csv
 import numpy as np
+from constants import MEASUREMENTS, RECIPE_DETAILS, INGREDIENTS
+from config import FILENAME
+
 
 def get_recipe_details(url):
     """ Extract recipe details from link
@@ -128,7 +131,8 @@ def get_ingredients(data):
     if result is not None:
         ingredients_description = [edit_ingredient(tag.text) for tag in result]
         ingredient_list = extract_ingredient([tag.text for tag in result])
-    return [ingredients_description,ingredient_list]
+    return [ingredients_description, ingredient_list]
+
 
 def edit_ingredient(ingredient):
     """
@@ -136,25 +140,25 @@ def edit_ingredient(ingredient):
     :return: list [quantity,ingredient_str] in which quantity is the measurment tool
     and its' quantity and ingredients is a string description of the recipes' ingredients
     """
-    if len(ingredient.split())==2:
+    if len(ingredient.split()) == 2:
         return ingredient.split()[:2]
     elif np.array([mes not in ingredient for mes in MEASUREMENTS]).all():
         return ingredient
     else:
         try:
             mes = re.findall(r'([\d /]+) \w',ingredient)
-            mes=mes[0]
+            mes = mes[0]
             ind = ingredient.index(mes)
             quantity = ingredient[:ind+len(mes)]
             ingredient = ingredient[ind+len(mes):].split()
             quantity = quantity+' '+ingredient[0]
             ingredient_str = ' '.join(ingredient[1:])
-            return [quantity,ingredient_str]
+            return [quantity, ingredient_str]
         except IndexError:
-            return  [None,ingredient]
+            return [None, ingredient]
 
 
-def extract_ingredient(list_ingred):
+def extract_ingredient(list_ingd):
     """
     gets ingredients description from get_ingredients, and return list
     of ingredients associated with the recipe
@@ -162,10 +166,10 @@ def extract_ingredient(list_ingred):
     :return: ingredients list
     """
     ingredient_list = []
-    for ing in list_ingred:
-        for ingred in INGREDIENTS:
-            if ingred.lower() in ing.lower():
-                ingredient_list.append(ingred)
+    for ing in list_ingd:
+        for ingd in INGREDIENTS:
+            if ingd.lower() in ing.lower():
+                ingredient_list.append(ingd)
     return ingredient_list
 
 
@@ -264,7 +268,6 @@ def write_data_to_csv(recipes_data, filname, headers):
         is_file_exists = True
 
     with open(filname, 'a', newline='') as csv_output:
-        # headers = RECIPE_DETAILS
         csv_writer = csv.DictWriter(csv_output, headers)
         if not is_file_exists:
             csv_writer.writeheader()

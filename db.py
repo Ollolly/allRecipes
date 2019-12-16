@@ -28,6 +28,7 @@ def create_db():
     logger.info("Create db and tables if not exists")
     db, cursor = connect_db()
     try:
+        # crete database
         cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DB_NAME}")
     except mysql.Error as err:
         db.close()
@@ -36,23 +37,56 @@ def create_db():
         raise Exception('DB error')
 
     try:
+        # crete tables
         cursor.execute(f"USE {DB_NAME}")
         cursor.execute(f"""CREATE TABLE IF NOT EXISTS recipes (
                           id int PRIMARY KEY AUTO_INCREMENT,
                           name varchar(255),
-                          category varchar(80),
-                          sub_category varchar(80),
-                          ingredients BLOB,
-                          prep_time varchar(80),
+                          category varchar(255),
+                          sub_category varchar(255),
+                          prep_time varchar(255),
                           calories int,
-                          author varchar(100),
+                          author varchar(255),
                           review int,
                           rating float,
-                          url varchar(100),
-                          image varchar(100),
+                          url varchar(255),
+                          image varchar(255),
                           summary BLOB,
                           directions BLOB
                         )""")
+
+        cursor.execute(f"""CREATE TABLE IF NOT EXISTS ingredients (
+                            id int PRIMARY KEY AUTO_INCREMENT,
+                            name varchar(255)
+                        )""")
+
+        cursor.execute(f"""CREATE TABLE IF NOT EXISTS nutrients (
+                            id int PRIMARY KEY AUTO_INCREMENT,
+                            ingd_id int,
+                            enerc_kcal float,
+                            procnt float,
+                            fat float,
+                            chocdf float,
+                            FOREIGN KEY (ingd_id) REFERENCES ingredients (id)
+                        )""")
+
+        cursor.execute(f"""CREATE TABLE IF NOT EXISTS recipe_ingredients (
+                            id int PRIMARY KEY AUTO_INCREMENT,
+                            recipe_id int,
+                            ingd_id int,
+                            FOREIGN KEY (recipe_id) REFERENCES recipes (id),
+                            FOREIGN KEY (ingd_id) REFERENCES ingredients (id)
+                        )""")
+
+        cursor.execute(f"""CREATE TABLE IF NOT EXISTS api_data (
+                            id int PRIMARY KEY AUTO_INCREMENT,
+                            ingd_id int,
+                            recipe_name varchar(255),
+                            url varchar(255),
+                            image varchar(255),
+                            FOREIGN KEY (ingd_id) REFERENCES ingredients (id)
+                        )""")
+
     except mysql.Error as err:
         logger = logging.getLogger(__name__)
         logger.error(f'Failed creating table: {err}"')
@@ -79,13 +113,12 @@ def insert_data_to_db(data):
     try:
         for i, record in enumerate(data):
             cursor.execute(f"USE {DB_NAME}")
-            insert_query = """INSERT INTO recipes (name, category, sub_category, ingredients, prep_time, calories, 
+            insert_query = """INSERT INTO recipes (name, category, sub_category, prep_time, calories, 
                             author, review, rating, url, image, summary, directions) 
-                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-            row = (record['name'], record['category'], record['sub_category'], record['ingredients_description'],
-                   record['ingredients_list'],record['prep_time'], record['calories'], record['author'],
-                   record['review'], record['rating'], record['url'], record['image'], record['summary'],
-                   record['directions'])
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+            row = (record['name'], record['category'], record['sub_category'], record['prep_time'],
+                   record['calories'], record['author'], record['review'], record['rating'],
+                   record['url'], record['image'], record['summary'], record['directions'])
             cursor.execute(insert_query, row)
 
             if i % 10000 == 0:
