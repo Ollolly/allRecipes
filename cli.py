@@ -58,6 +58,7 @@ class Cli:
 
     def args_handel(self):
         """ The function handles the arguments """
+        self.logger.info(f'Starting to  handel arguments')
         # get current categories
         exist_cat = sc.get_category_list(URL)
 

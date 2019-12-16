@@ -160,6 +160,10 @@ def insert_scrapped_data_to_db(data):
                    record['url'], record['image'], record['summary'], record['directions'])
             cursor.execute(insert_query, row)
 
+
+
+
+
             if i % 10000 == 0:
                 db.commit()
         db.commit()
@@ -182,14 +186,21 @@ def insert_api_data_to_db(data):
     logger.info("Starting to insert data into db")
     try:
         ing = select_ingredients()
+        cursor.execute(f"USE {DB_NAME}")
         for i, record in enumerate(data):
-            cursor.execute(f"USE {DB_NAME}")
-            insert_query = """INSERT INTO api_data (ingd_id, recipe_name, url, image) 
-                            VALUES (%s, %s, %s, %s)"""
+            ingd_id = ing[record['label']]
+            insert_query_nutrients = """INSERT INTO api_data (ingd_id, enerc_kcal, procnt, fat, carb) 
+                                        VALUES (%s, %s, %s, %s, %s)"""
+            row_nutr = (ingd_id, record['enerc_kcal'], record['procnt'], record['fat'], record['carb'])
+            cursor.execute(insert_query_nutrients, row_nutr)
+
+            insert_query_api_data = """INSERT INTO api_data (ingd_id, recipe_name, url, image) 
+                                        VALUES (%s, %s, %s, %s)"""
 
             for title,  links in data['related_recipes'].items():
-                row = (record[ing['name']], title, links['url'], links['img'])
-            cursor.execute(insert_query, row)
+                row_api_data = (ingd_id, title, links['url'], links['img'])
+                cursor.execute(insert_query_api_data, row_api_data)
+
             if i % 10000 == 0:
                 db.commit()
         db.commit()
@@ -212,8 +223,3 @@ def write_data_to_db(data_sc, data_api):
     insert_constant_data_to_db()
     insert_scrapped_data_to_db(data_sc)
     insert_api_data_to_db(data_api)
-
-# create_db()
-# insert_constant_data_to_db()
-
-# print(select_ingredients())

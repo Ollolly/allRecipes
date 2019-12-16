@@ -13,4 +13,4 @@ DB_NAME = 'allrecipes'
 # Database connection params
 DB_HOST = "localhost"
 DB_USER = "root"
-DB_PASSWD = "ravitmes"
+DB_PASSWD = "sd"

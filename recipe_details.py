@@ -11,8 +11,7 @@ import os
 import re
 import logging
 import csv
-import numpy as np
-from constants import MEASUREMENTS, RECIPE_DETAILS, INGREDIENTS, MEASUREMENTS_DICT
+from constants import INGREDIENTS, MEASUREMENTS_DICT
 
 
 def get_recipe_details(url):
