@@ -4,15 +4,14 @@ This module scraps given web links and handles extracted data from it:
      - writes recipe data to csv file
  """
 
+from collections import defaultdict
 import requests
 import bs4
-from collections import defaultdict
-import csv
-import logging
-import re
 import os
-
-from config import RECIPE_DETAILS, FILENAME
+import re
+import logging
+import csv
+from constants import INGREDIENTS, MEASUREMENTS_DICT
 
 
 def get_recipe_details(url):
@@ -122,14 +121,50 @@ def get_ingredients(data):
         Parameters:
         data (string) : scrapped data from website
         Returns:
-        string : ingredients list
+        ingredients_measurements - list of tuples
     """
     result = data.findAll('span', class_="recipe-ingred_txt added")
-    ret_val = None
     if result is not None:
-        ingredients = [tag.text for tag in result]
-        ret_val = ' '.join(ingredients)
-    return ret_val
+        ingredients_measurements = [edit_ingredient(tag.text) for tag in result]
+        ingredients_measurements = [x for x in ingredients_measurements if x is not None]
+        return ingredients_measurements
+
+
+def edit_ingredient(line):
+    """
+    parses a line of ingredient description to the following format:
+    quantity, measurement_tool, ingredient
+    :param line: text description of the ingredients as written in the site
+    :return: tuple (quantity, measurement_tool, ingredient)
+    """
+    try:
+        num = re.findall(r'([\d /]+) \w', line)
+        num = num[0]
+        start_idx = line.index(num)
+        quantity = line[:start_idx + len(num)]
+        ingredient = line[start_idx + len(num):].split()
+        measurement_tool = ingredient[0]
+        ingredient = ' '.join(ingredient[1:])
+    except IndexError:
+        logger = logging.getLogger(__name__)
+        logger.warning(f'Failed to get ingredient measurement')
+        return None
+
+    for k, v in MEASUREMENTS_DICT.items():
+        if measurement_tool in v:
+            measurement_tool = k
+            break
+
+    for ing in INGREDIENTS:
+        if ing in ingredient.lower().strip():
+            ingredient = ing
+            break
+    else:
+        logger = logging.getLogger(__name__)
+        logger.warning(f'Failed to get validate ingredient: {ingredient}')
+        return None
+
+    return quantity, measurement_tool, ingredient
 
 
 def convert_review_to_int(review):
@@ -184,18 +219,27 @@ def convert_prep_time_to_minutes(prep_time):
         Returns:
         int : amount of minutes
     """
-    if prep_time is None:
+    if prep_time is None :
         return None
 
-    minutes = None
-    try:
-        # TODO
-        minutes = prep_time
-    except ValueError:
-        logger = logging.getLogger(__name__)
-        logger.warning(f'Failed to convert preparation time to int')
+    tot_in_min = 0
+    prep_time = prep_time.replace(" ", "")
+    for i, ch in enumerate(prep_time):
+        if 'h' in prep_time:
+            if ch == 'h':
+                tot_in_min += int(prep_time[i - 1]) * 60
+                rest_prep_time = prep_time[i + 1:].strip('hm ')
+                if rest_prep_time!= "":
+                    tot_in_min += int(rest_prep_time)
+                    break
+                break
 
-    return minutes
+        else:
+            rest_prep_time = prep_time.strip('m ')
+            tot_in_min += int(rest_prep_time)
+            break
+
+    return tot_in_min
 
 
 def get_recipes_details(category, sub_category, urls):
@@ -217,17 +261,16 @@ def get_recipes_details(category, sub_category, urls):
     return recipes_data
 
 
-def write_data_to_csv(recipes_data):
+def write_data_to_csv(recipes_data, filname, headers):
     """ Appending the data to csv file
         Parameters:
         recipes_data (list if dict): data to write to file
     """
     is_file_exists = False
-    if os.path.exists(FILENAME):
+    if os.path.exists(filname):
         is_file_exists = True
 
-    with open(FILENAME, 'a', newline='') as csv_output:
-        headers = RECIPE_DETAILS
+    with open(filname, 'a', newline='') as csv_output:
         csv_writer = csv.DictWriter(csv_output, headers)
         if not is_file_exists:
             csv_writer.writeheader()
