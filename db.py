@@ -219,5 +219,5 @@ def write_data_to_db(data_sc, data_api):
     """
     create_db()
     insert_constant_data_to_db()
-    # insert_scrapped_data_to_db(data_sc)
+    insert_scrapped_data_to_db(data_sc)
     insert_api_data_to_db(data_api)
