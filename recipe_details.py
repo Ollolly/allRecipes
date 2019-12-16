@@ -13,7 +13,6 @@ import logging
 import csv
 import numpy as np
 from constants import MEASUREMENTS, RECIPE_DETAILS, INGREDIENTS
-from config import FILENAME
 
 
 def get_recipe_details(url):

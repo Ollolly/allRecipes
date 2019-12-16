@@ -11,7 +11,8 @@ import logging
 from constants import URL
 import db
 import api
-from config import REC_FILENAME, RECIPE_DETAILS
+from config import REC_FILENAME
+from constants import RECIPE_DETAILS
 
 
 class Cli:
@@ -107,8 +108,8 @@ class Cli:
                 self.logger.debug(sub_cat_links)
                 data = sc.scrap_data(cat, recipes)
                 self.logger.debug(data)
-                # sc.write_data_to_csv(data)
-                db.write_data_to_db(data, REC_FILENAME, RECIPE_DETAILS)
+                sc.write_data_to_csv(data, REC_FILENAME, RECIPE_DETAILS)
+                db.write_data_to_db(data)
 
 
 
