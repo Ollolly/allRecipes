@@ -235,9 +235,12 @@ def convert_prep_time_to_minutes(prep_time):
                 break
 
         else:
-            rest_prep_time = prep_time.strip('m ')
-            tot_in_min += int(rest_prep_time)
-            break
+            try:
+                rest_prep_time = prep_time.strip('m ')
+                tot_in_min += int(rest_prep_time)
+                break
+            except ValueError:
+                return None
 
     return tot_in_min
 
