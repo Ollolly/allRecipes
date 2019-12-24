@@ -41,9 +41,9 @@ def extract_nutrients(ing):
             }
         response = requests.request("GET", API_URL_NUTRIENTS, headers=headers, params=querystring)
         data = response.json()
-        label = data['hints'][0]['food']['label']
+        label = data['hints'][0]['food']['label'].strip()
 
-        if label.lower().strip()==ing.lower().strip():
+        if label.lower().strip() == ing.lower().strip():
             enerc_kcal = data['hints'][0]['food']['nutrients']['ENERC_KCAL']
             fat = data['hints'][0]['food']['nutrients']['FAT']
             procnt = data['hints'][0]['food']['nutrients']['PROCNT']
@@ -65,7 +65,7 @@ def get_info_ingred():
     """
     logger = logging.getLogger(__name__)
     logger.info(f"Starting api scrapping")
-    ing_data=[]
+    ing_data = []
     for ing in INGREDIENTS:
         ingred_data = {}
         if extract_nutrients(ing) is None:
