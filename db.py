@@ -75,6 +75,8 @@ def create_db():
                             id int PRIMARY KEY AUTO_INCREMENT,
                             recipe_id int,
                             ingd_id int,
+                            quantity varchar(255),
+                            measurement_tool varchar(255),
                             FOREIGN KEY (recipe_id) REFERENCES recipes (id),
                             FOREIGN KEY (ingd_id) REFERENCES ingredients (id)
                         )""")
@@ -150,15 +152,25 @@ def insert_scrapped_data_to_db(data):
     logger = logging.getLogger(__name__)
     logger.info("Starting to insert data into db")
     try:
+        ing = select_ingredients()
+        cursor.execute(f"USE {DB_NAME}")
         for i, record in enumerate(data):
-            cursor.execute(f"USE {DB_NAME}")
-            insert_query = """INSERT INTO recipes (name, category, sub_category, prep_time, calories, 
+            insert_query_recipes = """INSERT INTO recipes (name, category, sub_category, prep_time, calories, 
                             author, review, rating, url, image, summary, directions) 
                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-            row = (record['name'], record['category'], record['sub_category'], record['prep_time'],
-                   record['calories'], record['author'], record['review'], record['rating'],
-                   record['url'], record['image'], record['summary'], record['directions'])
-            cursor.execute(insert_query, row)
+            row_recipes = (record['name'], record['category'], record['sub_category'], record['prep_time'],
+                           record['calories'], record['author'], record['review'], record['rating'],
+                           record['url'], record['image'], record['summary'], record['directions'])
+            cursor.execute(insert_query_recipes, row_recipes)
+
+            insert_rec_ingd = """INSERT INTO recipe_ingredients (recipe_id, ingd_id, quantity, measurement_tool) 
+                                VALUES (%s, %s, %s, %s)"""
+            for item in record['ingredients']:
+                quantity, measur, ingd = item
+                ingd_id = ing[ingd]
+                row_rec_ingd = (i + 1, ingd_id, quantity, measur)
+                cursor.execute(insert_rec_ingd, row_rec_ingd)
+
             if i % 10000 == 0:
                 db.commit()
         db.commit()
@@ -187,11 +199,6 @@ def insert_api_data_to_db(data):
             insert_query_nutrients = """INSERT INTO nutrients (ingd_id, enerc_kcal, procnt, fat, carb) 
                                         VALUES (%s, %s, %s, %s, %s)"""
             row_nutr = (ingd_id, record['enerc_kcal'], record['procnt'], record['fat'], record['carb'])
-
-            print(record)
-            print(row_nutr)
-
-
             cursor.execute(insert_query_nutrients, row_nutr)
             insert_query_api_data = """INSERT INTO api_data (ingd_id, recipe_name, url, image) 
                                         VALUES (%s, %s, %s, %s)"""
