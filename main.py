@@ -2,7 +2,7 @@ import logging
 import logging.config
 import sys
 
-import api
+from api import API
 from cli import Cli, Cmd
 from scrapping import Scrapping
 from db import DataBase
@@ -58,6 +58,7 @@ def main():
 
         logging.debug(f'Scrap for categories: {cat}, and sub-categories: {sub_cat}')
         data_sc = sc.scrap_data(cat, recipes)
+        api = API()
         data_api = api.get_info_ingred()
         sc.write_data_to_csv(data_sc, REC_FILENAME, RECIPE_DETAILS)
         sc.write_data_to_csv(data_api, ING_FILENAME, ING_DETAILS)

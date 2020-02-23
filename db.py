@@ -49,8 +49,7 @@ class DataBase:
 
     def create_db(self):
         """ Creates database and tables if not exists """
-        logger = logging.getLogger(__name__)
-        logger.info("Create db and tables if not exists")
+        self.logger.info("Create db and tables if not exists")
         db, cursor = self.connect_db()
         try:
             # Crete database
@@ -58,13 +57,19 @@ class DataBase:
         except mysql.Error as err:
             cursor.close()
             db.close()
-            logger = logging.getLogger(__name__)
-            logger.error(f'Failed creating database: {err}"')
+            self.logger.error(f'Failed creating database: {err}"')
             raise Exception('DB error')
 
         try:
-            # Crete tables
+            # Select database
             cursor.execute(f"USE {self.db_name}")
+        except mysql.Error as err:
+            cursor.close()
+            db.close()
+            self.logger.error(f'Failed to select database: {err}"')
+            raise Exception('DB error')
+
+        try:
             cursor.execute(f"""CREATE TABLE IF NOT EXISTS recipes (
                               id int PRIMARY KEY AUTO_INCREMENT,
                               name varchar(255),
@@ -80,12 +85,24 @@ class DataBase:
                               summary BLOB,
                               directions BLOB
                             )""")
+        except mysql.Error as err:
+            cursor.close()
+            db.close()
+            self.logger.error(f'Failed creating table: recipes')
+            raise Exception('DB error')
 
+        try:
             cursor.execute(f"""CREATE TABLE IF NOT EXISTS ingredients (
                                 id int PRIMARY KEY AUTO_INCREMENT,
                                 name varchar(255)
                             )""")
+        except mysql.Error as err:
+            cursor.close()
+            db.close()
+            self.logger.error(f'Failed creating table: ingredients')
+            raise Exception('DB error')
 
+        try:
             cursor.execute(f"""CREATE TABLE IF NOT EXISTS nutrients (
                                 id int PRIMARY KEY AUTO_INCREMENT,
                                 ingd_id int,
@@ -95,7 +112,13 @@ class DataBase:
                                 carb float,
                                 FOREIGN KEY (ingd_id) REFERENCES ingredients (id)
                             )""")
+        except mysql.Error as err:
+            cursor.close()
+            db.close()
+            self.logger.error(f'Failed creating table: nutrients')
+            raise Exception('DB error')
 
+        try:
             cursor.execute(f"""CREATE TABLE IF NOT EXISTS recipe_ingredients (
                                 id int PRIMARY KEY AUTO_INCREMENT,
                                 recipe_id int,
@@ -105,7 +128,13 @@ class DataBase:
                                 FOREIGN KEY (recipe_id) REFERENCES recipes (id),
                                 FOREIGN KEY (ingd_id) REFERENCES ingredients (id)
                             )""")
+        except mysql.Error as err:
+            cursor.close()
+            db.close()
+            self.logger.error(f'Failed creating table: recipe_ingredients')
+            raise Exception('DB error')
 
+        try:
             cursor.execute(f"""CREATE TABLE IF NOT EXISTS api_data (
                                 id int PRIMARY KEY AUTO_INCREMENT,
                                 ingd_id int,
@@ -116,8 +145,7 @@ class DataBase:
                             )""")
 
         except mysql.Error as err:
-            logger = logging.getLogger(__name__)
-            logger.error(f'Failed creating table: {err}"')
+            self.logger.error(f'Failed creating table: api_data"')
             raise Exception('DB error')
         finally:
             cursor.close()
@@ -147,8 +175,7 @@ class DataBase:
     def insert_constant_data_to_db(self):
         """ Insert constant data from file "constants.py" to 'in'gredients' table """
         db, cursor = self.connect_db()
-        logger = logging.getLogger(__name__)
-        logger.info("Starting to insert data into db")
+        self.logger.info("Starting to insert data into db")
         try:
             for record in INGREDIENTS:
                 cursor.execute(f"USE {self.db_name}")
@@ -157,8 +184,7 @@ class DataBase:
 
             db.commit()
         except mysql.Error as err:
-            logger = logging.getLogger(__name__)
-            logger.error(f'Failed creating table: {err}"')
+            self.logger.error(f'Failed creating table: {err}"')
             raise Exception('DB error')
         finally:
             cursor.close()
@@ -170,8 +196,7 @@ class DataBase:
             data (list of dict): data to upload to database
         """
         db, cursor = self.connect_db()
-        logger = logging.getLogger(__name__)
-        logger.info("Starting to insert data into db")
+        self.logger.info("Starting to insert data into db")
         try:
             ing = self.select_ingredients()
             cursor.execute(f"USE {self.db_name}")
@@ -196,8 +221,7 @@ class DataBase:
                     db.commit()
             db.commit()
         except mysql.Error as err:
-            logger = logging.getLogger(__name__)
-            logger.error(f'Failed creating table: {err}"')
+            self.logger.error(f'Failed creating table: {err}"')
             raise Exception('DB error')
         finally:
             cursor.close()
@@ -209,8 +233,7 @@ class DataBase:
             data (list of dict): data to upload to database
         """
         db, cursor = self.connect_db()
-        logger = logging.getLogger(__name__)
-        logger.info("Starting to insert data into db")
+        self.logger.info("Starting to insert data into db")
         try:
             ing = self.select_ingredients()
             cursor.execute(f"USE {self.db_name}")
@@ -230,8 +253,7 @@ class DataBase:
                     db.commit()
             db.commit()
         except mysql.Error as err:
-            logger = logging.getLogger(__name__)
-            logger.error(f'Failed creating table: {err}"')
+            self.logger.error(f'Failed creating table: {err}"')
             raise Exception('DB error')
         finally:
             cursor.close()
