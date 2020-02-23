@@ -9,14 +9,15 @@ def main():
     logging.config.fileConfig(LOG_CONF)
     cli = Cli()
     cli.parse_arguments_advanced()
-    # try:
-    #     ret = cli.args_handel()
-    #     if ret is not None:
-    #         print(ret)
-    # except Exception as ex:
-    #     logging.error(f'failed to handel args, error: {ex}')
+    try:
+        ret = cli.args_handel()
+        if ret is not None:
+            print(ret)
+    except Exception as ex:
+        logging.error(f'Failed to handel args, error: {ex}')
 
-    ret = cli.args_handel()
+    # ret = cli.args_handel()
+    # print(ret)
 
 
 if __name__ == '__main__':

@@ -9,14 +9,17 @@ import scrapping as sc
 import sys
 import logging
 from constants import URL
-import db
+from db import DataBase
 import api
 from config import REC_FILENAME, ING_FILENAME
 from constants import RECIPE_DETAILS, ING_DETAILS
 
 
-class Cli:
 
+
+from config import DB_NAME, DB_HOST, DB_USER, DB_PASSWD
+
+class Cli:
     def __init__(self):
         self.args = None
         self.logger = logging.getLogger(__name__)
@@ -112,4 +115,5 @@ class Cli:
                 data_api = api.get_info_ingred()
                 sc.write_data_to_csv(data_sc, REC_FILENAME, RECIPE_DETAILS)
                 sc.write_data_to_csv(data_api, ING_FILENAME, ING_DETAILS)
+                db = DataBase(DB_HOST, DB_USER, DB_PASSWD, DB_NAME)
                 db.write_data_to_db(data_sc, data_api)

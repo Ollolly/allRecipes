@@ -1,7 +1,7 @@
 # Constants for the project
 
 # Website for scrapping
-URL = 'https://www.allrecipes.com/'
+URL = 'https://www.allrecipes.com'
 
 
 # Scraping keys used in the module recipe_details.py
