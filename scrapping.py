@@ -76,14 +76,14 @@ def scrap_data(category, subcategories_links):
     """
     logger = logging.getLogger(__name__)
     rep_data = []
-    for cat, links in subcategories_links.items():
-        logger.info(f'Extracting data from category {category} , subcategory {cat}')
-        data = rd.get_recipes_details(category, cat, links)
+    for sub_cat, links in subcategories_links.items():
+        logger.info(f'Extracting data from category {category} , subcategory {sub_cat}')
+        data = rd.get_recipes_details(category, sub_cat, links)
         rep_data.extend(data)
     return rep_data
 
 
-def write_data_to_csv(data):
+def write_data_to_csv(data, filename, headers):
     """ get recipe details and write it to csv
         Parameters:
         data (list of dict): data to write to csv file
@@ -92,4 +92,4 @@ def write_data_to_csv(data):
     """
     logger = logging.getLogger(__name__)
     logger.info(f'Appending data to csv file')
-    rd.write_data_to_csv(data)
+    rd.write_data_to_csv(data, filename, headers)
