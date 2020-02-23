@@ -5,19 +5,17 @@ the input arguments are parsed by the parse_arguments_advanced function
 """
 
 import argparse
-import scrapping as sc
-import sys
 import logging
-from constants import URL
-from db import DataBase
-import api
-from config import REC_FILENAME, ING_FILENAME
-from constants import RECIPE_DETAILS, ING_DETAILS
+import enum
 
 
+# Enumerations for Cli Class
+class Cmd(enum.Enum):
+    invalid_input = 0
+    cat_list = 1
+    sub_cat_list = 2
+    write_to_db = 3
 
-
-from config import DB_NAME, DB_HOST, DB_USER, DB_PASSWD
 
 class Cli:
     def __init__(self):
@@ -60,60 +58,32 @@ class Cli:
         self.args = parser.parse_args()
 
     def args_handel(self):
-        """ The function handles the arguments """
+        """ The function handles the arguments
+            Returns:
+            list: list of 3 parameters: [action, category, list of sub categories]
+        """
         self.logger.info(f'Starting to  handel arguments')
-        # get current categories
-        exist_cat = sc.get_category_list(URL)
 
         # in case l is given alone
         if self.args.list and self.args.category is None:
-            return exist_cat
+            return [Cmd.cat_list, None, None]
 
         # in case -lc is given
-        if self.args.list is not None and self.args.category is not None:
+        elif self.args.list is not None and self.args.category is not None:
             if len(self.args.list) != 1:
-                if self.args.category not in exist_cat:
-                    self.logger.error(f'Invalid input: category {self.args.category} not exists')
-                    sys.exit("invalid input")
-
-                cat_link = sc.get_category_links(URL, self.args.category)
-                sub_category_list = sc.get_category_list(cat_link[self.args.category])
-                return sub_category_list
+                return [Cmd.sub_cat_list, self.args.category, None]
             else:
                 self.logger.error(f'Invalid input, args: -lc')
-                sys.exit("invalid input")
+                return [Cmd.invalid_input, None, None]
 
         # in case -g is given correctly(with category and sub-category)
-        if self.args.get is not None:
-            if len(self.args.get) <= 1:
+        elif self.args.get is not None:
+            if len(self.args.get) > 1:
+                return [Cmd.write_to_db, self.args.get[0], self.args.get[1:]]
+            else:
                 self.logger.error(f'Invalid input, args: -g  requested '
                                   f'category {self.args.get[0]} requested subcategory {self.args.get[1:]}')
-                sys.exit("invalid input")
-            else:
-                cat = self.args.get[0]
-                if cat not in exist_cat:
-                    self.logger.error(f'Invalid input: category {cat} not exists')
-                    sys.exit("invalid input")
-
-                cat_link = sc.get_category_links(URL, cat)
-                exist_subcat = sc.get_category_list(cat_link[cat])
-                sub_cat = self.args.get[1:]
-
-                if set(sub_cat) - set(exist_subcat) != set():
-                    self.logger.error(f'Invalid input: at least on of subcategories {sub_cat} not exists')
-                    sys.exit("invalid input")
-
-                cat_link = sc.get_category_links(URL, cat)
-                sub_cat_links = sc.get_category_links(cat_link[cat], sub_cat)
-                recipes = {}
-                for sub_cat, link in sub_cat_links.items():
-                    recipes[sub_cat] = sc.get_recipe_links(link)
-
-                self.logger.debug(cat)
-                self.logger.debug(sub_cat)
-                data_sc = sc.scrap_data(cat, recipes)
-                data_api = api.get_info_ingred()
-                sc.write_data_to_csv(data_sc, REC_FILENAME, RECIPE_DETAILS)
-                sc.write_data_to_csv(data_api, ING_FILENAME, ING_DETAILS)
-                db = DataBase(DB_HOST, DB_USER, DB_PASSWD, DB_NAME)
-                db.write_data_to_db(data_sc, data_api)
+                return [Cmd.invalid_input, None, None]
+        else:
+            self.logger.error(f'Unknown error')
+            return [Cmd.invalid_input, None, None]
