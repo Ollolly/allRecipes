@@ -8,7 +8,7 @@ The actions of the module:
 from bs4 import BeautifulSoup
 import requests
 import logging
-import recipe_details as rd
+from recipe_details import RecipeDetails
 
 
 class Scrapping:
@@ -78,6 +78,7 @@ class Scrapping:
             list of dict: where each dictionary contains data of one link
         """
         rep_data = []
+        rd = RecipeDetails()
         for sub_cat, links in subcategories_links.items():
             self.logger.info(f'Extracting data from category {category} , subcategory {sub_cat}')
             data = rd.get_recipes_details(category, sub_cat, links)
@@ -92,4 +93,5 @@ class Scrapping:
             list of dict: where each dictionary contains data of one link
         """
         self.logger.info(f'Appending data to csv file')
+        rd = RecipeDetails()
         rd.write_data_to_csv(data, filename, headers)
