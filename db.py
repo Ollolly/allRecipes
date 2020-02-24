@@ -49,7 +49,7 @@ class DataBase:
 
     def create_db(self):
         """ Creates database and tables if not exists """
-        self.logger.info("Create db and tables if not exists")
+        self.logger.debug("Create db and tables if not exists")
         db, cursor = self.connect_db()
         try:
             # Crete database
@@ -175,7 +175,7 @@ class DataBase:
     def insert_constant_data_to_db(self):
         """ Insert constant data from file "constants.py" to 'in'gredients' table """
         db, cursor = self.connect_db()
-        self.logger.info("Starting to insert data into db")
+        self.logger.debug("Starting to insert data into db")
         try:
             for record in INGREDIENTS:
                 cursor.execute(f"USE {self.db_name}")
@@ -196,7 +196,7 @@ class DataBase:
             data (list of dict): data to upload to database
         """
         db, cursor = self.connect_db()
-        self.logger.info("Starting to insert data into db")
+        self.logger.debug("Starting to insert data into db")
         try:
             ing = self.select_ingredients()
             cursor.execute(f"USE {self.db_name}")
@@ -233,7 +233,7 @@ class DataBase:
             data (list of dict): data to upload to database
         """
         db, cursor = self.connect_db()
-        self.logger.info("Starting to insert data into db")
+        self.logger.debug("Starting to insert data into db")
         try:
             ing = self.select_ingredients()
             cursor.execute(f"USE {self.db_name}")

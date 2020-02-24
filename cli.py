@@ -44,12 +44,11 @@ class Cli:
                             action="store")
 
         parser.add_argument("-g", "--get", help="""
-                            scraping data of the requested category and subcategory and save it in a 
-                            csv and sql data base. receives two arguments: category and sub-category 
+                            Scraping data of the requested category and subcategory and save it in a 
+                            csv and sql data base. Receives two arguments: category and sub-category 
                             Note: don't forget to add "" around category/subcategory of >=2 words.
                         
-                            For example: '$python main.py -g Cookies "Butter Cookies" "Biscotti"' 
-                            will output the recipes associated with Butter Cookies.
+                            example: '$python main.py -g Cookies "Butter Cookies" "Biscotti"' 
                             """, nargs='+')
 
         self.args = parser.parse_args()

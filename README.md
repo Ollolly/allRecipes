@@ -7,7 +7,6 @@ The program returns a detailed database and csv file containing the data in a we
 TO DO
 
 ## Requirements
-
 All requirements are specified in the file "requirements.txt"
 
 
@@ -17,6 +16,14 @@ config.py file.
 2. Changing the FILENAME (csv output file) and the DB_NAME  
 (database output name) are optional by changing the values of these constants in the 
 config file.
+
+## To Run the program
+1. To get list of categories:
+    $python main.py -l
+2. To get list of sub categories for specific category:
+    $python main.py -lc category_name
+3. Save all recipes of sub-categories from specific category:
+    $python main.py -g category_name sub_category_name1 "sub category name2" sub_category_name3
 
 ## History
 checkpoint1: TODO

@@ -7,20 +7,7 @@ This module scraps given web links and handles extracted data from it:
 from collections import defaultdict
 import requests
 import bs4
-import os"""
-This module scraps given web links and handles extracted data from it:
-     - extracted recipe details
-     - writes recipe data to csv file
- """
-
-from collections import defaultdict
-import requests
-import bs4
 import os
-import re
-import logging
-import csv
-from constants import INGREDIENTS, MEASUREMENTS_DICT
 
 
 class RecipeDetails:
