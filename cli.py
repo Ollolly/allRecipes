@@ -24,7 +24,7 @@ class Cli:
 
     def parse_arguments_advanced(self):
         """ Processing and storing the arguments of the program
-            returns an argparse.Nampespace object, depicting and store the input arguments
+            returns an argparse. Namespace object, depicting and store the input arguments
             according to the defined flags
         """
         parser = argparse.ArgumentParser(
@@ -32,17 +32,14 @@ class Cli:
         )
 
         parser.add_argument("-l", "--list", help="""
-                            output list of possible recipes categories if no further arguments is given
-                            or list of possible recipes of sub-categories associated with the requested
-                            category if the -c flag is specified with the category name
-                            for example: '-l' will output list of optional categories.
-                            '-lc cat1' will output all optional subcategories associated 
-                            with the category cat1 """, action="store_true")
+                            Returns the list of categories.
+                            example: '$python main.py -l'
+                            """, action="store_true")
 
-        parser.add_argument("-c", "--category", help="""receives one argument (category) after the
-                            -l flag and outputs the list of sub categories associated 
-                            with the specified category. for example: '-lc Cookies' will output the 
-                            following list: ['Butter Cookies', 'Bar Cookies', .....]
+        parser.add_argument("-c", "--category", help="""
+                            Receives one argument (category) after the -l flag and returns the list of 
+                            sub categories associated with the specified category. 
+                            example: '$python main.py -lc Cookies' 
                             """,    # TODO add a condition that this flag can not be independent
                             action="store")
 
@@ -51,7 +48,7 @@ class Cli:
                             csv and sql data base. receives two arguments: category and sub-category 
                             Note: don't forget to add "" around category/subcategory of >=2 words.
                         
-                            For example: -g Cookies "Butter Cookies" 
+                            For example: '$python main.py -g Cookies "Butter Cookies" "Biscotti"' 
                             will output the recipes associated with Butter Cookies.
                             """, nargs='+')
 
@@ -62,18 +59,16 @@ class Cli:
             Returns:
             list: list of 3 parameters: [action, category, list of sub categories]
         """
-        self.logger.info(f'Starting to  handel arguments')
+        self.logger.debug(f'Starting to  handel arguments')
 
-        # in case l is given alone
-        if self.args.list and self.args.category is None:
-            return [Cmd.cat_list, None, None]
-
-        # in case -lc is given
-        elif self.args.list is not None and self.args.category is not None:
-            if len(self.args.list) != 1:
+        if self.args.list:
+            # in case l is given alone
+            if self.args.category is None:
+                return [Cmd.cat_list, None, None]
+            elif self.args.category is not None:
                 return [Cmd.sub_cat_list, self.args.category, None]
             else:
-                self.logger.error(f'Invalid input, args: -lc')
+                self.logger.error(f'Invalid input')
                 return [Cmd.invalid_input, None, None]
 
         # in case -g is given correctly(with category and sub-category)

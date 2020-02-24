@@ -23,21 +23,23 @@ def main():
         logging.debug(f'Arguments received: {ret}')
     except Exception as ex:
         logging.error(f'Failed to handel args, error: {ex}')
+        sys.exit("invalid input")
 
     sc = Scrapping()
     cat = ret[1]
     sub_cats = ret[2]
 
     exist_cat = sc.get_category_list(URL)
+    logging.debug(f'List of categories: {exist_cat}')
+
     if ret[0] == Cmd.cat_list:
-        logging.debug(f'List of categories: {exist_cat}')
         print(exist_cat)
     elif ret[0] == Cmd.sub_cat_list:
         if cat not in exist_cat:
             logging.error(f'Invalid input: category {cat} not exists')
             sys.exit("invalid input")
-        cat_link = sc.get_category_links(URL, ret[2])
-        sub_category_list = sc.get_category_list(cat_link[ret[2]])
+        cat_link = sc.get_category_links(URL, cat)
+        sub_category_list = sc.get_category_list(cat_link[cat])
         print(sub_category_list)
     elif ret[0] == Cmd.write_to_db:
         if cat not in exist_cat:
