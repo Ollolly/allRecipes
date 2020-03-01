@@ -24,13 +24,3 @@ config file.
     $python main.py -lc category_name
 3. Save all recipes of sub-categories from specific category:
     $python main.py -g category_name sub_category_name1 "sub category name2" sub_category_name3
-
-## History
-checkpoint1: TODO
-
-checkpoint2: TODO
-
-## Authors
-Olga K, hazin.olga@gmail.com
-
-Ravit M, ravit2244@gmail.com 
